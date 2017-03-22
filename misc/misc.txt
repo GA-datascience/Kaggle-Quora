@@ -1,1 +1,10 @@
 https://coderwall.com/p/7aymfa/please-oh-please-use-git-pull-rebase
+
+
+Some reference: 
+Starter 
+https://www.kaggle.com/anokas/quora-question-pairs/data-analysis-xgboost-starter-0-35460-lb
+
+More advance techniques 
+https://www.linkedin.com/pulse/duplicate-quora-question-abhishek-thakur
+
