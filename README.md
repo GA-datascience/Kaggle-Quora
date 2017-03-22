@@ -16,3 +16,8 @@ author: "Team Members: Germayne Ng, Alson Yap"
 # Results
 
 # Conclusion
+
+# References 
+Some good references. (delete later) 
+<br>
+https://www.linkedin.com/pulse/duplicate-quora-question-abhishek-thakur
