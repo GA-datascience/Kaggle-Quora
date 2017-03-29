@@ -109,7 +109,8 @@ print('total number of question pairs for testing:{}'.format(len(df_test)))
 
 
 # Now we will want to list all the questions out. 
-# * note: panda series list elements out and we want to make them string. (as type)
+# * note: panda series list elements out and we want to make them string. (as type) 
+# * note: astype is for series 
 train_qs = pd.Series(df_train['question1'].tolist() + df_train['question2'].tolist()).astype(str)
 
 test_qs = pd.Series(df_test['question1'].tolist() + df_test['question2'].tolist()).astype(str)
@@ -149,6 +150,7 @@ print('mean-train {:.2f} std-train {:.2f} mean-test {:.2f} std-test {:.2f} max-t
 # words count analysis 
 
 # remove spaces 
+# lamda apply do properly to each row 
 dist_train_word = train_qs.apply(lambda x: len(x.split(' ')))
 dist_test_word = test_qs.apply(lambda x: len(x.split(' ')))
 
@@ -183,5 +185,87 @@ plt.axis('off')
 
 #Semantic analysis 
 
-# Taking a look at the 
+# Taking a look at the punctuation in the questions. 
+# using .apply lambda function  
 
+question_marks = np.mean(train_qs.apply(lambda x: '?' in x))
+math = np.mean(train_qs.apply(lambda x: '[math]' in x)) # check if there are math equations 
+fullstop = np.mean(train_qs.apply(lambda x: '.' in x)) 
+
+capital_first = np.mean(train_qs.apply(lambda x: x[0].isupper())) 
+capitals = np.mean(train_qs.apply(lambda x: max([y.isupper() for y in x]) )) # for each x, [true, false , false, ...etc] then we take the max 
+numbers = np.mean(train_qs.apply(lambda x: max([y.isdigit() for y in x])))
+
+print('Questions with question marks: {:.2f}%'.format(qmarks * 100))
+print('Questions with [math] tags: {:.2f}%'.format(math * 100))
+print('Questions with full stops: {:.2f}%'.format(fullstop * 100))
+print('Questions with capitalised first letters: {:.2f}%'.format(capital_first * 100))
+print('Questions with capital letters: {:.2f}%'.format(capitals * 100))
+print('Questions with numbers: {:.2f}%'.format(numbers * 100))
+
+
+
+# Using ntlk, initial feature analysis==============================================================================
+# import nltk 
+# nltk.download()
+# under corpus > choose stopwords to install it 
+
+
+from nltk.corpus import stopwords
+
+# preset a set of stopwords from the corpus database which we will use later, 153 stopwords 
+stops = set(stopwords.words("english"))
+
+def word_match_share(row):
+    # define dictionary. recall dictionary maps key + value {key:value, key:value} and we call the q1words['key'] = value  
+    q1words = {}
+    q2words = {}
+    
+    
+    # row is a mini dataframe for later 
+    # .lower.split change all to lower and split each words into list object 
+    # so for each element in the list, if the word is not in stop set, we place it in the dictonary q1words
+    # q1words contains all the non stop words in q1 
+    # q2words contains all the non stop words in q2 
+    
+    for word in str(row['question1']).lower().split(): 
+        if word not in stops: 
+            q1words[word] = 1 
+    # do the same for q2 
+    for word in str(row['question2']).lower().split(): 
+        if word not in stops:
+            q2words[word] = 1
+    
+    # conisder the case where the entire sentence is all stopwords 
+    if len(q1words) == 0 or len(q2words) == 0 :
+        return 0
+    # find the proportion of shared words between q1 and q2 out of the whole question     
+    # recall, q1words is dictionary, key value pair. we want the keys only 
+    # add them into shared_words_q1 as a list 
+    shared_words_q1 = [word for word in q1words.keys() if word in q2words.keys()]
+    shared_words_q2 = [word for word in q2words.keys() if word in q1words.keys()]   
+    R = (len(shared_words_q1) + len(shared_words_q2))/(len(q1words) + len(q2words))
+    return R 
+    
+    
+# using the function we created above 
+# * note: apply takes in argument of function and apply it to every row (axis = 1)
+# default axis = 0 ( every column) 
+
+# list of every question pair in train set and the proportion of shared words 
+word_match_trainset = df_train.apply(word_match_share, axis = 1, raw=True)
+
+      
+# time to plot the thing out! 
+
+plt.figure(figsize = (15,5))        
+# take out the idex of those with is_duplicate == 0
+#  
+plt.hist(word_match_trainset[df_train['is_duplicate']== 0], bins= 20, normed= True, label= 'no duplicate')
+plt.hist(word_match_trainset[df_train['is_duplicate']== 1], bins= 20, normed= True, label= 'is duplicate', alpha = 0.7)
+
+        
+              
+        
+        
+        
