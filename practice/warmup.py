@@ -290,6 +290,144 @@ plt.xlabel('Proportion of shared words', fontsize = 15)
 # If we are asking the same type of questions, it is highly likely there are a larger proportion of 
 # shared words :) 
     
+# TF-IDF  --------------------------------------------------------
+
+# Term frequency inverse document frequency 
+# moving on ahead from the above feature, will be using what is known as the 
+# TF-IDF feature. We want the rare shared words between the questions than the common ones     
+        
+ from collections import Counter
+
+# If a word appears only once, we ignore it completely (likely a typo)
+# Epsilon defines a smoothing constant, which makes the effect of extremely rare words smaller
+def get_weight(count, eps=10000, min_count=2):
+    if count < min_count:
+        return 0
+    else:
+        return 1 / (count + eps)
+
+eps = 5000 
+words = (" ".join(train_qs)).lower().split() 
+counts = Counter(words)
+
+# some basic explaination what is going on here: 
+# counts.items is a dict items of (word, count)
+# so for x,y is where x = words and y = count of the words 
+# where we input the x and y into x:get_weight(y) 
+# recall: dictionary class with a key and value  
+
+weights = {word: get_weight(count) for word, count in counts.items()}       
+
+# show top 10 [:10]
+# top common words so smallest weight
+print('Top 10  common words and weights: \n')
+print(sorted(weights.items(), key=lambda x: x[1] if x[1] > 0 else 1)[:10])
+
+# show bottom 10 (lowest weight) (less than 2 counts) bigger weight
+print('Bottom 10 common words and weights: \n')
+(sorted(weights.items(), key=lambda x: x[1], reverse=True)[:10])
+
+
+
+# lets do another super function to do the shared word.
+# but now, instead of doing it proportion of shared words, we will use weights 
+
+def tfidf_word_match_share(row):
+    q1words = {}
+    q2words = {}
+    for word in str(row['question1']).lower().split():
+        if word not in stops:
+            q1words[word] = 1
+    for word in str(row['question2']).lower().split():
+        if word not in stops:
+            q2words[word] = 1
+    if len(q1words) == 0 or len(q2words) == 0:
+        # The computer-generated chaff includes a few questions that are nothing but stopwords
+        return 0
     
-        
-        
+    # so now, we have q1words with all the non stopwords and q2words with all non stopwords from q2 
+    # previously, we used proportion of shared words between the question pairs 
+    # now, lets use weights to quantify it 
+    
+    # extracting the value by searching for shared words (shared keys )
+    # [list of shared weights] [ weight1 ,weight2 ... etc]
+    shared_weights = [weights.get(word,0) for word in q1words if word in q2words] + [weights.get(word,0) for word in q2words if word in q1words]   
+    
+    total_weights = [weights.get(word,0) for word in q1words] + [weights.get(word,0) for word in q2words]
+    # recall both list are still a list of weights... so we need to sum them up 
+    R = np.sum(shared_weights) / np.sum(total_weights)
+    return R 
+    
+    
+    
+# lets plot the same histogram to compare 
+# lets use our super function 
+tfid_word_match_trainset = df_train.apply(tfidf_word_match_share, axis = 1, raw = True)
+
+
+# fillna to fill the na or Nan
+plt.figure(figsize = (15,5))
+plt.hist(tfid_word_match_trainset[df_train['is_duplicate']==0].fillna(0), bins = 20, normed = True, label = 'no duplicate')    
+plt.hist(tfid_word_match_trainset[df_train['is_duplicate']==1], bins = 20, normed = True, label = 'duplicate', alpha = 0.7)    
+plt.legend()
+plt.title('Train set: Duplicate vs no duplicate, weights of shared words', fontsize =15)
+plt.xlabel('proportion of shared words using tfidf', fontsize = 15)
+    
+    
+# comparison using AUC between our first shared words proportion vs our TFIDF shared words 
+# roc_auc_score(true, your estimate)
+# recall: our word_match are series of proportion of shared words which we can use as a measure 
+# for our duplicate estimation 
+from sklearn.metrics import roc_auc_score
+print('original AUC:', roc_auc_score(df_train['is_duplicate'], word_match_trainset ))
+print('TDIDF:', roc_auc_score(df_train['is_duplicate'], tfid_word_match_trainset )  )
+ 
+# comments: TDIDF model is not as good as the basic estimation.     
+# let us try to do the model for the proportion of shared words on the test set and lets submit to see 
+# if our score if improve! 
+
+word_match_testset = df_test.apply(word_match_share, axis = 1, raw=True)
+word_match_testset_df = pd.Series.to_frame(word_match_testset) # convert series to frame
+secondsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':word_match_testset_df[0]})
+secondsub.head()
+# output this as csv
+secondsub.to_csv('second_submission.csv', index=False)
+
+# comments: Really no need to submit. The AUC score shows its a 0.7 Really bad :/ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+
