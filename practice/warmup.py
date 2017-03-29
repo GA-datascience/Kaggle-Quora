@@ -12,28 +12,27 @@ import os # read or open file
 import gc 
 import matplotlib.pyplot as plt 
 import seaborn as sns # statistical visualization 
-
-#==============================================
-
-
 %matplotlib inline
-
 pal = sns.color_palette() # for color selection later on :)
 
 #=============================================== 
-# training set (data import)
-
-
-
-
+# All data import and manipulation 
+#
+# To make things easier, I will 
 df_train = pd.read_csv('train.csv')
+df_test = pd.read_csv('test.csv')
 
-# view the top few to see the structure of the data 
-df_train.head()
+
 
 
 #===========================================================================
-# more in depth structure 
+#1 More in depth structure 
+
+
+
+
+# view the top few to see the structure of the data 
+df_train.head()
 
 # number of elements (length ) 
 print('Total number of question pairs for training: {}'.format(len(df_train)))
@@ -51,7 +50,7 @@ print('Number of questions that appear multiple times: {}'.format(np.sum(qids.va
 
 
 
-#===========================================================
+
 #Histogram 
 
 
@@ -67,7 +66,7 @@ print()
 
 
 #===========================================================
-# Attempt to fit the mean prob of duplicates of our train set to our test set. 
+#2 Attempt to fit the mean prob of duplicates of our train set to our test set. 
 
 # submission 1 
 
@@ -81,19 +80,18 @@ p = df_train['is_duplicate'].mean()
 print('Predicted score:', log_loss(df_train['is_duplicate'], np.zeros_like(df_train['is_duplicate']) + p))
 
 
-# now time to import the test test 
-df_test = pd.read_csv('test.csv')
 
 # format is pd.DataFrame({})
 # inside 'title': data , 'title of var': data
+
 firstsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':p})
 firstsub.head()
-# output this csv
+# output this as csv
 firstsub.to_csv('first_submission.csv', index=False)
 
-#============================================================================
-# taking a look at the test set 
 
+# taking a look at the test set 
+#
 df_test.head()
 
 print('total number of question pairs for testing:{}'.format(len(df_test)))
@@ -104,8 +102,14 @@ print('total number of question pairs for testing:{}'.format(len(df_test)))
 
 
 #===========================================================================
-# Text analysis (on the train set)
-# character count analysis and word count analysis
+#3 Text analysis (on the train set)
+# 
+# 1. character count analysis 
+# 2. word count analysis 
+# 3. word cloud 
+# 4. semantic analysis 
+# 5. stopwords analysis 
+# 6. TF-IDF 
 
 
 # Now we will want to list all the questions out. 
@@ -144,10 +148,10 @@ print('mean-train {:.2f} std-train {:.2f} mean-test {:.2f} std-test {:.2f} max-t
 # some comments: 
 # we can see that from both of the test set, the average number of characters lies around 60 characters 
 # Very rare are there questions exceeding 150-200 characters. 
-#-----------------------------------------
 
 
-# words count analysis 
+
+# words count analysis  --------------------------------------------------------
 
 # remove spaces 
 # lamda apply do properly to each row 
@@ -175,15 +179,18 @@ print('mean-train {:.2f} std-train {:.2f} mean-test {:.2f} std-test {:.2f} max-t
 
 from wordcloud import WordCloud
 
-the_word_cloud = WordCloud().generate(' '.join(train_qs.astype(str)))
 
+# A fix format for doing word cloud in python
+
+
+the_word_cloud = WordCloud().generate(' '.join(train_qs.astype(str)))
 # now to plot the word cloud 
 plt.figure(figsize = (20,15))
 plt.imshow(the_word_cloud)
 plt.axis('off')
 
 
-#Semantic analysis 
+#Semantic analysis  --------------------------------------------------------
 
 # Taking a look at the punctuation in the questions. 
 # using .apply lambda function  
@@ -205,7 +212,7 @@ print('Questions with numbers: {:.2f}%'.format(numbers * 100))
 
 
 
-# Using ntlk, initial feature analysis==============================================================================
+# Using ntlk, initial feature analysis  --------------------------------------------------------
 # import nltk 
 # nltk.download()
 # under corpus > choose stopwords to install it 
@@ -215,6 +222,14 @@ from nltk.corpus import stopwords
 
 # preset a set of stopwords from the corpus database which we will use later, 153 stopwords 
 stops = set(stopwords.words("english"))
+
+
+
+
+# Very powerful function written: To give proportion of shared words without the stopwords 
+# 
+# This function only applies to 1 question pair of 1 row. *
+
 
 def word_match_share(row):
     # define dictionary. recall dictionary maps key + value {key:value, key:value} and we call the q1words['key'] = value  
@@ -237,6 +252,7 @@ def word_match_share(row):
             q2words[word] = 1
     
     # conisder the case where the entire sentence is all stopwords 
+    # we want to return 0 because if q1words or q2words is 0, there is no point continuing 
     if len(q1words) == 0 or len(q2words) == 0 :
         return 0
     # find the proportion of shared words between q1 and q2 out of the whole question     
@@ -247,6 +263,8 @@ def word_match_share(row):
     R = (len(shared_words_q1) + len(shared_words_q2))/(len(q1words) + len(q2words))
     return R 
     
+
+
     
 # using the function we created above 
 # * note: apply takes in argument of function and apply it to every row (axis = 1)
@@ -260,12 +278,18 @@ word_match_trainset = df_train.apply(word_match_share, axis = 1, raw=True)
 
 plt.figure(figsize = (15,5))        
 # take out the idex of those with is_duplicate == 0
-#  
 plt.hist(word_match_trainset[df_train['is_duplicate']== 0], bins= 20, normed= True, label= 'no duplicate')
 plt.hist(word_match_trainset[df_train['is_duplicate']== 1], bins= 20, normed= True, label= 'is duplicate', alpha = 0.7)
+plt.legend()
+plt.title('Train set: Duplicate vs no duplicate, proportion of shared words', fontsize =15)
+plt.xlabel('Proportion of shared words', fontsize = 15)        
 
-        
-              
-        
+# comments: We can see that for question pairs that are not the same type of questions, they tend to have 
+# less shared words as compared to question pairs that are the same! 
+# There is indeed some link to shared words to how similar the questions are. 
+# If we are asking the same type of questions, it is highly likely there are a larger proportion of 
+# shared words :) 
+    
+    
         
         
