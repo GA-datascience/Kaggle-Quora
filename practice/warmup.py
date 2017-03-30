@@ -1,6 +1,18 @@
 # Kaggle competition warm up 
 # Quora question pairs 
 
+# Ctrl F to find contents e.g for 1, find #1 
+# Table of contents 
+#
+# 1: More in depth structure  
+# 2: Attempt to fit the mean prob of duplicates of our train set to our test set. 
+# 3: Text analysis (on the train set)
+# 4: XGBoost Prep
+#  : References   
+
+
+
+
 
 #================================================
 # importing libraries 
@@ -396,10 +408,122 @@ secondsub.to_csv('second_submission.csv', index=False)
 # comments: Really no need to submit. The AUC score shows its a 0.7 Really bad :/ 
 
 
+#===========================================================
+
+#4 XGBoost 
+
+# The rebalancing (? clarify) process for the data XGboost receives 
+# 37% positive class in training set and only 17% on test set  
+# Aim to rebalance the training set to 17%
+
+# empty data frames 
+x_train = pd.DataFrame()
+x_test = pd.DataFrame()
+# fill in the data frames with some of the features we found previously
+x_train['word_match'] = word_match_trainset
+x_train['tfidf']= tfid_word_match_trainset
+
+x_test['word_match'] = df_test.apply(word_match_share, axis= 1, raw = True)
+x_test['tfidf'] = df_test.apply(tfidf_word_match_share, axis = 1, raw = True)
+
+# using y_train a reference later 
+# we want to extract rows with ==1 and ==0 under is_duplicate
+# notes *: similar to R where we use df[df$is_duplicate == 1]
+y_train = df_train['is_duplicate'].values # consist of is_duplicate 1 or 0
+
+pos_train = x_train[y_train == 1] #df 
+neg_train = x_train[y_train == 0] #df   
+    
+
+# now we over sample the negative class (need more reference on this methodology)
+p = 0.165
+scale = ((len(pos_train) / (len(pos_train) + len(neg_train))) / p) - 1
+while scale > 1:
+    neg_train = pd.concat([neg_train, neg_train])
+    scale -=1
+neg_train = pd.concat([neg_train, neg_train[:int(scale * len(neg_train))]])
+print(len(pos_train) / (len(pos_train) + len(neg_train)))
+
+# rebild the x_train and y_train 
+x_train = pd.concat([pos_train, neg_train])
+y_train = (np.zeros(len(pos_train)) + 1).tolist() + np.zeros(len(neg_train)).tolist()
+del pos_train, neg_train
+
+# split some data off for validation 
+# see help(train_test_split)
+# we are splitting the df of x_train and y_train into 2 more. so total 4 df
+# the valid is like a test set. renamed to avoid confusion
+# the y dataframes are the labels of is_duplicates with 1/0
+ 
+from sklearn.cross_validation import train_test_split 
+
+x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = 0.2, random_state = 4242)
 
 
+# begin xgboost ------------------------------------------------------------------------
+import xgboost as xgb
+
+# set parameters for xgboost 
+# some general parameters: 
+
+# Booster parameters
+    # eta =  The default value is set to 0.3. You need to specify step size shrinkage used in update to prevents overfitting. 
+    # After each boosting step, we can directly get the weights of new features. 
+    # and eta actually shrinks the feature weights to make the boosting process more conservative. 
+    # The range is 0 to 1. Low eta value means model is more robust to overfitting.
+    
+    # max_depth =  The default value is set to 6. 
+    # You need to specify the maximum depth of a tree. The range is 1 to ∞.
+#-------------------------------------------------------------------------------------    
+# learning task parameters 
+    # Objective = The default value is set to reg:linear . 
+    # You need to specify the type of learner you want which includes linear regression, 
+    # logistic regression, poisson regression etc.
+    
+    # eval metric = You need to specify the evaluation metrics for validation data, a default metric will be assigned according 
+    # to objective( rmse for regression, and error for classification, 
+    # mean average precision for ranking
+
+params = {} # dict 
+params['eta'] = 0.02
+params['max_depth'] = 4
+
+params['objective'] = 'binary:logistic'
+params['eval_metric'] = 'logloss'
+
+d_train = xgb.DMatrix(x_train, label = y_train) # train set input into xgb
+d_valid = xgb.DMatrix(x_valid, label = y_valid) # valid (test) set input. 
+
+# for evals_result: dict class
+watchlist = [(d_train, 'train'), (d_valid, 'valid')]
+
+# start modelling and training on the train and valid df (split from x_train and y_train)
+bst = xgb.train(params, d_train, 400, watchlist, early_stopping_rounds=50, verbose_eval=10)
+
+# so now we have our model that is trained to a low log loss, we can now apply the model to the test set 
+
+d_test = xgb.DMatrix(x_test) # convert the real test df into xbg format
+result_test = bst.predict(d_test) # put into our model above. this is our answer  
+
+# now lets write our answer to csv
+
+thirdsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':result_test})
+
+thirdsub.to_csv('thirdsub.csv',index = False )
 
 
+# score= 0.35460
+
+
+#===========================================================
+
+#5 References 
+
+# main script 
+# https://www.kaggle.com/anokas/quora-question-pairs/data-analysis-xgboost-starter-0-35460-lb
+
+# xgboost parameters 
+# https://www.analyticsvidhya.com/blog/2016/01/xgboost-algorithm-easy-steps/
 
 
 
