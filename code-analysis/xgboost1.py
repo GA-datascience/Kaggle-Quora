@@ -122,7 +122,10 @@ x_train['q2_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[2]))
 x_train['ratio_diff'] = temp_df['allR'].apply(lambda x: float(x.split(':')[3]))
 x_train['no_shared_words'] = temp_df['allR'].apply(lambda x: float(x.split(':')[4]))
 x_train['tfidf'] = df_train.apply(tfidf_word_match_share, axis = 1, raw = True)
-# filling in the features. train set 
+
+del temp_df
+
+# filling in the features. test set 
 
 temp_df_test['allR'] = df_test.apply(shared_words, axis = 1, raw = True)
 x_test['shared_words'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[0]))
@@ -134,7 +137,7 @@ x_test['tfidf'] = df_test.apply(tfidf_word_match_share, axis = 1, raw = True)
 
 
 # remove temp 
-del temp_df, temp_df_test 
+del temp_df_test 
 
 
 y_train = df_train['is_duplicate']
