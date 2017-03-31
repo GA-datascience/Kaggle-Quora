@@ -5,7 +5,7 @@
 
 import numpy as np # lA 
 import pandas as pd # data process 
-import matplotlib.pyplot as plt # for graph 
+#import matplotlib.pyplot as plt # for graph 
 
 from nltk.corpus import stopwords 
 from collections import Counter 
@@ -23,7 +23,7 @@ df_test = pd.read_csv('test.csv')
 
 
 # functions 
-#
+# 2 functions for nonstop words comparison as well as TFIDF using weights 
 
 
 
@@ -98,15 +98,31 @@ def tfidf_word_match_share(row):
     return R
 
 
-# features 
-# currently: 
+
+    
+    
+    
+    
+    
+
+# features Engineering
+# currently: 12 features
     # Shared words proportion 
     # TFIDF 
-    # q1's non stop words ratio / q2's non stop words ratio
+    
+    # q1's non stop words ratio 
+    # q2's non stop words ratio
     # question pair ratio difference 
+    
     # number of shared words in question pairs 
-
-
+    
+    # word count in q1
+    # word count in q2
+    # word count difference 
+    
+    # character count in q1 (including spaces)
+    # character count in q2 (including spaces)
+    # character count difference (including spaces)
 
 
 
@@ -114,14 +130,27 @@ x_train = pd.DataFrame() # for train set
 x_test = pd.DataFrame() # for test set 
 temp_df = pd.DataFrame() # later remove 
 temp_df_test = pd.DataFrame()
+
 # filling in the features. train set  
 temp_df['allR'] = df_train.apply(shared_words, axis = 1, raw = True)
+
 x_train['shared_words'] = temp_df['allR'].apply(lambda x: float(x.split(':')[0]))
+
 x_train['q1_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[1]))
 x_train['q2_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[2]))
 x_train['ratio_diff'] = temp_df['allR'].apply(lambda x: float(x.split(':')[3]))
+
 x_train['no_shared_words'] = temp_df['allR'].apply(lambda x: float(x.split(':')[4]))
+
 x_train['tfidf'] = df_train.apply(tfidf_word_match_share, axis = 1, raw = True)
+
+x_train['q1_word_count'] = df_train['question1'].apply(lambda x: len(str(x).lower().split()))
+x_train['q2_word_count'] = df_train['question2'].apply(lambda x: len(str(x).lower().split()))
+x_train['diff_word_count'] = x_train['q1_word_count'] - x_train['q2_word_count']
+
+x_train['q1_char_count_withspace'] = df_train['question1'].apply(lambda x: len(str(x)))
+x_train['q2_char_count_withspace'] = df_train['question2'].apply(lambda x: len(str(x)))
+x_train['diff_char_count_withspace'] = x_train['q1_char_count_withspace'] - x_train['q2_char_count_withspace']
 
 del temp_df
 
@@ -129,11 +158,24 @@ del temp_df
 
 temp_df_test['allR'] = df_test.apply(shared_words, axis = 1, raw = True)
 x_test['shared_words'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[0]))
+
+
 x_test['q1_ns_ratio'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[1]))
 x_test['q2_ns_ratio'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[2]))
 x_test['ratio_diff'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[3]))
+
 x_test['no_shared_words'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[4]))
+
 x_test['tfidf'] = df_test.apply(tfidf_word_match_share, axis = 1, raw = True)
+
+x_test['q1_word_count'] = df_test['question1'].apply(lambda x: len(str(x).lower().split()))
+x_test['q2_word_count'] = df_test['question2'].apply(lambda x: len(str(x).lower().split()))
+x_test['diff_word_count'] = x_test['q1_word_count'] - x_test['q2_word_count']
+
+x_test['q1_char_count_withspace'] = df_test['question1'].apply(lambda x: len(str(x)))
+x_test['q2_char_count_withspace'] = df_test['question2'].apply(lambda x: len(str(x)))
+x_test['diff_char_count_withspace'] = x_test['q1_char_count_withspace'] - x_test['q2_char_count_withspace']
+
 
 
 # remove temp 
@@ -161,7 +203,7 @@ del pos_train, neg_train
 
 random = 12357
 np.random.seed(random)
-x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = 0.2, random_state = 12357)
+x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = 0.2, random_state = random)
 
 
 
@@ -182,15 +224,21 @@ watchlist = [(xg_train, 'train'), (xg_valid, 'valid')]
 
 
 # start modelling and training on the train and valid df (split from x_train and y_train)
+# 
+# [500] train-logloss: 0.339 valid-logloss:0.34481 (6 features)
+# [500] train-logloss:0.330407  valid-logloss:0.338668 (12 features)
 bst = xgb.train(params, xg_train, 500, watchlist)
+
+
+# time to input our test dataset into our model 
 
 
 xg_test = xgb.DMatrix(x_test)
 output_result = bst.predict(xg_test)
 
 # excited to see our fourth submission, will it be improvement?
-fourthsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
-fourthsub.to_csv('fourthsub.csv',index = False )
+fifthsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
+fifthsub.to_csv('fifthsub.csv',index = False)
 
 
 
@@ -198,7 +246,7 @@ fourthsub.to_csv('fourthsub.csv',index = False )
 
 # plotting the important variables 
 
-variables_important = bst.get_fscore()
+variables_important = bst.get_fscore() # dict
 score_df = pd.DataFrame()
 score_df['variables'] = variables_important.keys()
 score_df['f_score'] = variables_important.values()
@@ -208,7 +256,7 @@ score_df.plot(kind= 'barh', x='variables',y='f_score', legend = False)
 
 
 # References 
-# based code from warmup.py 
+# 
 # https://www.kaggle.com/alijs1/quora-question-pairs/xgb-starter-12357/code
 
 
