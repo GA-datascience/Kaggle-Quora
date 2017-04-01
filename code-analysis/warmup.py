@@ -215,7 +215,7 @@ capital_first = np.mean(train_qs.apply(lambda x: x[0].isupper()))
 capitals = np.mean(train_qs.apply(lambda x: max([y.isupper() for y in x]) )) # for each x, [true, false , false, ...etc] then we take the max 
 numbers = np.mean(train_qs.apply(lambda x: max([y.isdigit() for y in x])))
 
-print('Questions with question marks: {:.2f}%'.format(qmarks * 100))
+print('Questions with question marks: {:.2f}%'.format(question_marks * 100))
 print('Questions with [math] tags: {:.2f}%'.format(math * 100))
 print('Questions with full stops: {:.2f}%'.format(fullstop * 100))
 print('Questions with capitalised first letters: {:.2f}%'.format(capital_first * 100))
@@ -308,7 +308,7 @@ plt.xlabel('Proportion of shared words', fontsize = 15)
 # moving on ahead from the above feature, will be using what is known as the 
 # TF-IDF feature. We want the rare shared words between the questions than the common ones     
         
- from collections import Counter
+from collections import Counter
 
 # If a word appears only once, we ignore it completely (likely a typo)
 # Epsilon defines a smoothing constant, which makes the effect of extremely rare words smaller
@@ -392,7 +392,7 @@ plt.xlabel('proportion of shared words using tfidf', fontsize = 15)
 # for our duplicate estimation 
 from sklearn.metrics import roc_auc_score
 print('original AUC:', roc_auc_score(df_train['is_duplicate'], word_match_trainset ))
-print('TDIDF:', roc_auc_score(df_train['is_duplicate'], tfid_word_match_trainset )  )
+print('TDIDF:', roc_auc_score(df_train['is_duplicate'], tfid_word_match_trainset ))
  
 # comments: TDIDF model is not as good as the basic estimation.     
 # let us try to do the model for the proportion of shared words on the test set and lets submit to see 

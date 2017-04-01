@@ -9,6 +9,7 @@ import pandas as pd # data process
 
 from nltk.corpus import stopwords 
 from collections import Counter 
+from fuzzywuzzy import fuzz
 
 from sklearn.cross_validation import train_test_split 
 import xgboost as xgb # xgboost model 
@@ -97,11 +98,21 @@ def tfidf_word_match_share(row):
     R = np.sum(shared_weights) / np.sum(total_weights)
     return R
 
+#   function 3: Jaccard Distance 
 
+def jaccard_dist(row):
+    return jaccard_distance(set(str(row['question1'])), set(str(row['question2'])))
+    
+#   function 4: Cosine Distance
 
-    
-    
-    
+def cosine_dist(row):
+    a = set(str(row[question1']))
+    b = set(str(row[question2']))
+    d = len(a)*len(b)
+    if (d == 0):
+        return 0
+    else: 
+        return len(a.intersection(b))/d
     
     
 
@@ -135,12 +146,11 @@ temp_df_test = pd.DataFrame()
 temp_df['allR'] = df_train.apply(shared_words, axis = 1, raw = True)
 
 x_train['shared_words'] = temp_df['allR'].apply(lambda x: float(x.split(':')[0]))
-
 x_train['q1_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[1]))
 x_train['q2_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[2]))
 x_train['ratio_diff'] = temp_df['allR'].apply(lambda x: float(x.split(':')[3]))
 
-x_train['no_shared_words'] = temp_df['allR'].apply(lambda x: float(x.split(':')[4]))
+x_train['shared_words_length'] = temp_df['allR'].apply(lambda x: float(x.split(':')[4]))
 
 x_train['tfidf'] = df_train.apply(tfidf_word_match_share, axis = 1, raw = True)
 
@@ -151,6 +161,14 @@ x_train['diff_word_count'] = x_train['q1_word_count'] - x_train['q2_word_count']
 x_train['q1_char_count_withspace'] = df_train['question1'].apply(lambda x: len(str(x)))
 x_train['q2_char_count_withspace'] = df_train['question2'].apply(lambda x: len(str(x)))
 x_train['diff_char_count_withspace'] = x_train['q1_char_count_withspace'] - x_train['q2_char_count_withspace']
+
+x_train['fuzz_qratio'] = df_train.apply(lambda x: fuzz.QRatio(str(x['question1']), str(x['question2'])), axis=1)
+x_train['fuzz_WRatio'] = df_train.apply(lambda x: fuzz.WRatio(str(x['question1']), str(x['question2'])), axis=1)
+x_train['fuzz_partial_ratio'] = df_train.apply(lambda x: fuzz.partial_ratio(str(x['question1']), str(x['question2'])), axis=1)
+x_train['fuzz_partial_token_set_ratio'] = df_train.apply(lambda x: fuzz.partial_token_set_ratio(str(x['question1']), str(x['question2'])), axis=1)
+x_train['fuzz_partial_token_sort_ratio'] = df_train.apply(lambda x: fuzz.partial_token_sort_ratio(str(x['question1']), str(x['question2'])), axis=1)
+x_train['fuzz_token_set_ratio'] = df_train.apply(lambda x: fuzz.token_set_ratio(str(x['question1']), str(x['question2'])), axis=1)
+x_train['fuzz_token_sort_ratio'] = df_train.apply(lambda x: fuzz.token_sort_ratio(str(x['question1']), str(x['question2'])), axis=1)
 
 del temp_df
 
@@ -164,7 +182,7 @@ x_test['q1_ns_ratio'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[
 x_test['q2_ns_ratio'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[2]))
 x_test['ratio_diff'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[3]))
 
-x_test['no_shared_words'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[4]))
+x_test['shared_words_length'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[4]))
 
 x_test['tfidf'] = df_test.apply(tfidf_word_match_share, axis = 1, raw = True)
 
@@ -176,6 +194,14 @@ x_test['q1_char_count_withspace'] = df_test['question1'].apply(lambda x: len(str
 x_test['q2_char_count_withspace'] = df_test['question2'].apply(lambda x: len(str(x)))
 x_test['diff_char_count_withspace'] = x_test['q1_char_count_withspace'] - x_test['q2_char_count_withspace']
 
+x_test['fuzz_qratio'] = df_test.apply(lambda x: fuzz.QRatio(str(x['question1']), str(x['question2'])), axis=1)
+
+x_test['fuzz_WRatio'] = df_test.apply(lambda x: fuzz.WRatio(str(x['question1']), str(x['question2'])), axis=1)
+x_test['fuzz_partial_ratio'] = df_test.apply(lambda x: fuzz.partial_ratio(str(x['question1']), str(x['question2'])), axis=1)
+x_test['fuzz_partial_token_set_ratio'] = df_test.apply(lambda x: fuzz.partial_token_set_ratio(str(x['question1']), str(x['question2'])), axis=1)
+x_test['fuzz_partial_token_sort_ratio'] = df_test.apply(lambda x: fuzz.partial_token_sort_ratio(str(x['question1']), str(x['question2'])), axis=1)
+x_test['fuzz_token_set_ratio'] = df_test.apply(lambda x: fuzz.token_set_ratio(str(x['question1']), str(x['question2'])), axis=1)
+x_test['fuzz_token_sort_ratio'] = df_test.apply(lambda x: fuzz.token_sort_ratio(str(x['question1']), str(x['question2'])), axis=1)
 
 
 # remove temp 
@@ -237,8 +263,8 @@ xg_test = xgb.DMatrix(x_test)
 output_result = bst.predict(xg_test)
 
 # excited to see our fourth submission, will it be improvement?
-fifthsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
-fifthsub.to_csv('fifthsub.csv',index = False)
+nextsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
+nextsub.to_csv('fifthsub.csv',index = False)
 
 
 

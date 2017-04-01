@@ -1,10 +1,14 @@
 https://coderwall.com/p/7aymfa/please-oh-please-use-git-pull-rebase
 
 
-Some reference: 
-Starter 
+Some references
+
+1) Starter:
 https://www.kaggle.com/anokas/quora-question-pairs/data-analysis-xgboost-starter-0-35460-lb
 
-More advance techniques 
+2) More advanced techniques: 
 https://www.linkedin.com/pulse/duplicate-quora-question-abhishek-thakur
 
+
+3) Spell checker(corrector):
+http://norvig.com/spell-correct.html
