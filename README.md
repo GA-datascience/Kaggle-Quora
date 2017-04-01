@@ -5,6 +5,7 @@ author: "Team Members: Germayne Ng, Alson Yap"
 
 # Update Logs
 <br>
+
 * Version 1.3 - 1st April 2017:
 Added Jaccard distance and Cosine distance features. Total 21 features. (Rank 133: Top 15%)
 
