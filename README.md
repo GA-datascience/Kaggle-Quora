@@ -6,16 +6,16 @@ author: "Team Members: Germayne Ng, Alson Yap"
 # Update Logs
 <br>
 
-* Version 1.3 - 1st April 2017:
+* **Version 1.3 - 1st April 2017:**
 Added Jaccard distance and Cosine distance features. Total 21 features. (Rank 133: Top 15%)
 
-* Version 1.2 1st April 2017: 
+* **Version 1.2 - 1st April 2017:**
 Added 7 FuzzyWuzzy features. Total 19 features. (Rank 151: Top 15%) 
 
-* Version 1.1 31st March 2017:
+* **Version 1.1 - 31st March 2017:**
 Added additional features. Total 12 features. (Rank: 215 Top 25%)
 
-* Version 1.0 30th March 2017:
+* **Version 1.0 - 30th March 2017:**
 Implemented Xgboost with 6 features.  
 
 # References 
