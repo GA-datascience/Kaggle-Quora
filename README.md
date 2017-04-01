@@ -31,6 +31,8 @@ Implemented Xgboost with 6 features.
     + https://www.kaggle.com/aneeshc/quora-question-pairs/fuzzy-feature-based-classification/notebook
 
     + https://www.linkedin.com/pulse/duplicate-quora-question-abhishek-thakur
+    
+* Future reference for new ideas:https://www.kaggle.com/c/quora-question-pairs/discussion/30340#171996
 
 
 # For Germ's reference on coming Monday (delete after read)
