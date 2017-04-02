@@ -6,12 +6,12 @@
 import numpy as np 
 import pandas as pd # data process 
 import re
+from collections import Counter
 
-
-df_train = pd.read_csv('train.csv')
+#df_train = pd.read_csv('train.csv')
 df_test = pd.read_csv('test.csv')
 
-df_train_corrected = df_train
+#df_train_corrected = df_train
 df_test_corrected = df_test
 
 
@@ -50,8 +50,16 @@ def edits2(word):
     "All edits that are two edits away from `word`."
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
+
+import multiprocessing as mp
+import pandas.util.testing as pdt
+
+
 ## Added this function to use for .apply on every row
+i=0
 def sentence_correction(row):
+    global i
+    print ("Current iteration is {}.".format(i))
 
     q1 = str(row['question1']).lower().split()
     q2 = str(row['question2']).lower().split()
@@ -65,9 +73,26 @@ def sentence_correction(row):
     row['question1'] = q1
     row['question2'] = q2
     
+    i += 1
+
     return row
-    
+
+def process_df(df):
+    res = df.apply(sentence_correction, axis = 1)
+    return res    
 
 
-df_train_corrected = df_train.apply(sentence_correction, axis = 1)
-df_test_corrected = df_test.apply(sentence_correction, axis = 1)
+if __name__ == '__main__':
+    p = mp.Pool(processes=4)
+    split_dfs = np.array_split(df_test2,4)
+    pool_results = p.map(process_df, split_dfs)
+    p.close()
+    p.join()
+
+# merging parts processed by different processes
+    df_test_corrected = pd.concat(pool_results, axis=0)
+
+
+
+#df_train_corrected = df_train.apply(sentence_correction, axis = 1)
+#df_test_corrected = df_test.apply(sentence_correction, axis = 1)
