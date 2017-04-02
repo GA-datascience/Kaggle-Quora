@@ -12,3 +12,11 @@ https://www.linkedin.com/pulse/duplicate-quora-question-abhishek-thakur
 
 3) Spell checker(corrector):
 http://norvig.com/spell-correct.html
+
+
+4) Hyperparameters Tuning Slides:
+https://www.slideshare.net/SessionsEvents/alexandra-johnson-software-engineer-sigopt
+
+
+5) Tips and tricks to win Kaggle competitions:
+https://www.slideshare.net/slideshow/embed_code/key/ay239jhtJn15jR
