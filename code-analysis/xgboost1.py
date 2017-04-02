@@ -7,7 +7,6 @@
 import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
-import sea
 
 from nltk.corpus import stopwords 
 from nltk.metrics import jaccard_distance
@@ -20,6 +19,8 @@ import xgboost as xgb
 
 #### 1.2) Read the data ###
 
+# For reading in the spell corrected df_train file
+# df_train = pd.read_csv('df_train_corrected.csv', encoding = "ISO-8859-1")
 df_train = pd.read_csv('train.csv')
 df_test = pd.read_csv('test.csv')
 
@@ -196,8 +197,6 @@ x_train['fuzz_token_sort_ratio'] = df_train.apply(lambda x: fuzz.token_sort_rati
 # Set 5
 x_train['jaccard_dist'] = df_train.apply(jaccard_dist, axis = 1)
 x_train['cosine_dist'] = df_train.apply(cosine_dist, axis = 1)
-x_test['jaccard_dist'] = df_test.apply(jaccard_dist, axis = 1)
-x_test['cosine_dist'] = df_test.apply(cosine_dist, axis = 1)
 
 del temp_df
 
@@ -312,7 +311,7 @@ output_result = bst.predict(xg_test)
 ### 5.5) Write out submission into csv file  ###
 # Woof woof
 nextsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
-nextsub.to_csv('nextsub_jacc_cos_dist.csv',index = False)
+nextsub.to_csv('nextsub_descriptionhere.csv',index = False)
 
 
 ################################################################################
