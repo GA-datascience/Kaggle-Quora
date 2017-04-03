@@ -21,7 +21,7 @@ Added additional features. Total 12 features. (Rank: 215 Top 25%)
 * **Version 1.0 - 30th March 2017:**
 
 Implemented Xgboost with 6 features.  
-
+---
 # References 
 
 * Initial reference: https://www.kaggle.com/alijs1/quora-question-pairs/xgb-starter-12357/code
@@ -34,7 +34,7 @@ Implemented Xgboost with 6 features.
     
 * Future reference for new ideas:https://www.kaggle.com/c/quora-question-pairs/discussion/30340#171996
 
-
+---
 # For Germ's reference on coming Monday (delete after read)
 To describe what I have done over the weekend
 
@@ -69,3 +69,5 @@ Download the x_test.csv and x_train.csv with all the 21 features loaded inside.
 Can just load and add in new features from there onwards.
 
 **Conclusion: Fuzzy wuzzy features are really significant. But realise that after implementing the Jaccard and Cosine dist features, the rankings changed. Refer to the features importance in the figures folder**
+
+---
