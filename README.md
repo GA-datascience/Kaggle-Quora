@@ -36,10 +36,10 @@ Implemented Xgboost with 6 features.
     
 * Future reference for new ideas:https://www.kaggle.com/c/quora-question-pairs/discussion/30340#171996
 
+* Jaccard and Cosine distance: https://www.kaggle.com/heraldxchaos/quora-question-pairs/adventures-in-scikitlearn-and-nltk/run/1040772
 ---
 
-# For Germ's reference on coming Monday (delete after read)
-To describe what I have done over the weekend
+# To do/ comments
 
 1. **Running the spell checker script on train set and testing set (~20k per hour)**
 
@@ -51,25 +51,6 @@ Spell checker script taken from: http://norvig.com/spell-correct.html
 Download big.txt file because the script needs to reference to that corpus of words.
 I only added the sentence_correction function which is to be run on both data sets.
 
-2. **Added fuzzy wuzzy features**
-
-Refer to the links above.
-
-Also suggest to check out the fuzzywuzzy's Github page for information on those functions.
-Interesting concept and easy to understand examples.
-
-Implementation takes very long, so do not suggest running again.
-
-3. **Added Jaccard and Cosine distance features**
-
-Refer to: https://www.kaggle.com/heraldxchaos/quora-question-pairs/adventures-in-scikitlearn-and-nltk/run/1040772
-
-These 2 features can also be found in the Indian dude's script.
-
-4. **Created Dropbox account**
-
-Download the x_test.csv and x_train.csv with all the 21 features loaded inside.
-Can just load and add in new features from there onwards.
 
 **Conclusion: Fuzzy wuzzy features are really significant. But realise that after implementing the Jaccard and Cosine dist features, the rankings changed. Refer to the features importance in the figures folder**
 
