@@ -10,6 +10,10 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 # Update Logs
 <br>
 
+* **Version 1.4 - 4th April 2017:**
+
+Expanded on the TFIDF function. Total 26 features. Accuracy: 0.32787 (Rank 164: Top 14%)
+
 * **Version 1.3 - 1st April 2017:**
 
 Added Jaccard distance and Cosine distance features. Total 21 features. (Rank 133: Top 15%)
