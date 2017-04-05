@@ -43,10 +43,15 @@ Implemented Xgboost with 6 features.
     + https://www.kaggle.com/aneeshc/quora-question-pairs/fuzzy-feature-based-classification/notebook
 
     + https://www.linkedin.com/pulse/duplicate-quora-question-abhishek-thakur
+
+* Jaccard and Cosine distance: https://www.kaggle.com/heraldxchaos/quora-question-pairs/adventures-in-scikitlearn-and-nltk/run/1040772
     
 * Future reference for new ideas:https://www.kaggle.com/c/quora-question-pairs/discussion/30340#171996
 
-* Jaccard and Cosine distance: https://www.kaggle.com/heraldxchaos/quora-question-pairs/adventures-in-scikitlearn-and-nltk/run/1040772
+* Xgboost references, hypertuning 
+    + https://github.com/dmlc/xgboost/blob/master/doc/parameter.md
+    
+    + http://xgboost.readthedocs.io/en/latest/how_to/param_tuning.html
 ---
 
 # To do/ comments
