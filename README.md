@@ -48,10 +48,17 @@ Implemented Xgboost with 6 features.
     
 * Future reference for new ideas:https://www.kaggle.com/c/quora-question-pairs/discussion/30340#171996
 
-* Xgboost references, hypertuning 
+* Xgboost references
     + https://github.com/dmlc/xgboost/blob/master/doc/parameter.md
     
     + http://xgboost.readthedocs.io/en/latest/how_to/param_tuning.html
+    
+* The art of hyper tuning 
+    + https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/
+    
+    + https://www.slideshare.net/ShangxuanZhang/kaggle-winning-solution-xgboost-algorithm-let-us-learn-from-its-author
+    
+    + https://www.slideshare.net/odsc/owen-zhangopen-sourcetoolsanddscompetitions1
 ---
 
 # To do/ comments
