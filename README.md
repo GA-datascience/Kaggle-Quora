@@ -21,7 +21,7 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 
 * **Version 1.3 - 1st April 2017:**
 
-Added Jaccard distance and Cosine distance features. Total 21 features. (Rank 133: Top 15%)
+  + Added Jaccard distance and Cosine distance features. Total 21 features. (Rank 133: Top 15%)
 
 * **Version 1.2 - 1st April 2017:**
 
