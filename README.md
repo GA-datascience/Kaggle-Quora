@@ -13,6 +13,8 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 * **Version 1.4 - 4th April 2017:**
 
 Expanded on the TFIDF function. Total 26 features. Accuracy: 0.32787 (Rank 164: Top 14%)
+<br>
+Updated features dataset in dropbox
 
 * **Version 1.3 - 1st April 2017:**
 
