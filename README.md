@@ -8,6 +8,8 @@ author: "Team Members: Germayne Ng, Alson Yap"
 <br>
 Link to competition details and question: https://www.kaggle.com/c/quora-question-pairs
 
+---
+
 # Update Logs
 <br>
 
