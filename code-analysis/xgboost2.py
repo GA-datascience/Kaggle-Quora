@@ -17,6 +17,8 @@ from fuzzywuzzy import fuzz
 from sklearn.cross_validation import train_test_split 
 import xgboost as xgb 
 
+random = 12357
+np.random.seed(random)
 
 #### 1.2) Read the data ###
 
@@ -84,6 +86,10 @@ weights = {word: get_weight(count) for word, count in counts.items()}
 def tfidf_word_match_share(row):
     q1words = {}
     q2words = {}
+    q1 = str(row['question1']).lower().split()
+    q2 = str(row['question2']).lower().split()
+    
+    
     for word in str(row['question1']).lower().split():
         if word not in stops:
             q1words[word] = 1
@@ -91,13 +97,23 @@ def tfidf_word_match_share(row):
         if word not in stops:
             q2words[word] = 1
     if len(q1words) == 0 or len(q2words) == 0:
-        return 0
+        return '0:0:0'
     
 
     shared_weights = [weights.get(word,0) for word in q1words if word in q2words] + [weights.get(word,0) for word in q2words if word in q1words]   
     total_weights = [weights.get(word,0) for word in q1words] + [weights.get(word,0) for word in q2words]
     R = np.sum(shared_weights) / np.sum(total_weights)
-    return R
+    
+    
+    q1_weights = [weights.get(word,0) for word in q1words]
+    q1_total_weights = [weights.get(word,0) for word in q1]
+    R1 = np.sum(q1_weights) / np.sum(q1_total_weights)
+    
+    q2_weights = [weights.get(word,0) for word in q2words]
+    q2_total_weights = [weights.get(word,0) for word in q2]
+    R2 = np.sum(q2_weights) / np.sum(q2_total_weights)
+    
+    return '{}:{}:{}'.format(R,R1,R2)
 
 ### 2.3) Function 3: Jaccard Distance (1 feature)  ###
 
@@ -130,7 +146,9 @@ def cosine_dist(row):
     # 1.5 = Length (number) of shared non stop words
     
     #Set 2 (1 feature)
-    # 2.1 = TFIDF 
+    # 2.1 = TFIDF of shared words between question pairs
+    # 2.2 = TFIDF of q1 
+    # 2.3 = TFIDF of q2
     
     # Set 3 (6 features)
     # 3.1 = Word count in q1
@@ -169,6 +187,7 @@ temp_df_test = pd.DataFrame()
 
 # create temp df for set 1 function  
 temp_df['allR'] = df_train.apply(shared_words, axis = 1, raw = True)
+temp_df['tfidf_all'] = df_train.apply(tfidf_word_match_share, axis = 1, raw = True)
 
 # Set 1
 x_train['shared_words'] = temp_df['allR'].apply(lambda x: float(x.split(':')[0]))
@@ -178,7 +197,9 @@ x_train['ratio_diff'] = temp_df['allR'].apply(lambda x: float(x.split(':')[3]))
 x_train['shared_words_length'] = temp_df['allR'].apply(lambda x: float(x.split(':')[4]))
 
 # Set 2
-x_train['tfidf'] = df_train.apply(tfidf_word_match_share, axis = 1, raw = True)
+x_train['tfidf'] = temp_df['tfidf_all'].apply(lambda x: float(x.split(':')[0]))
+x_train['tfidf_q1'] = temp_df['tfidf_all'].apply(lambda x: float(x.split(':')[1]))
+x_train['tfidf_q2'] = temp_df['tfidf_all'].apply(lambda x: float(x.split(':')[2]))
 
 # Set 3
 x_train['q1_word_count'] = df_train['question1'].apply(lambda x: len(str(x).lower().split()))
@@ -215,6 +236,7 @@ del temp_df
 
 # create temp df for set 1 function
 temp_df_test['allR'] = df_test.apply(shared_words, axis = 1, raw = True)
+temp_df_test['tfidf_all'] = df_test.apply(tfidf_word_match_share, axis = 1, raw = True)
 
 # Set 1 
 x_test['shared_words'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[0]))
@@ -224,7 +246,9 @@ x_test['ratio_diff'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[3
 x_test['shared_words_length'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[4]))
 
 # Set 2
-x_test['tfidf'] = df_test.apply(tfidf_word_match_share, axis = 1, raw = True)
+x_test['tfidf'] = temp_df_test['tfidf_all'].apply(lambda x: float(x.split(':')[0]))
+x_test['tfidf_q1'] = temp_df_test['tfidf_all'].apply(lambda x: float(x.split(':')[1]))
+x_test['tfidf_q2'] = temp_df_test['tfidf_all'].apply(lambda x: float(x.split(':')[2]))
 
 # Set 3
 x_test['q1_word_count'] = df_test['question1'].apply(lambda x: len(str(x).lower().split()))
@@ -281,8 +305,7 @@ x_train = pd.concat([pos_train, neg_train])
 y_train = (np.zeros(len(pos_train)) + 1).tolist() + np.zeros(len(neg_train)).tolist()
 del pos_train, neg_train
 
-random = 12357
-np.random.seed(random)
+
 x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = 0.2, random_state = random)
 
 
@@ -296,7 +319,7 @@ params['eta'] = 0.15
 params['max_depth'] = 5 
 params['objective'] = 'binary:logistic'
 params['eval_metric'] = 'logloss'
-params['seed'] = 123
+params['seed'] = random
 
 
 ### 5.2) Concatenates the information into DMatrix for training ###
@@ -324,8 +347,8 @@ output_result = bst.predict(xg_test)
 
 ### 5.5) Write out submission into csv file  ###
 # Woof woof
-nextsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
-nextsub.to_csv('nextsub_descriptionhere.csv',index = False)
+tensub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
+tensub.to_csv('ten.csv',index = False)
 
 
 ################################################################################
