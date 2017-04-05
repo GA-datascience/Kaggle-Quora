@@ -3,6 +3,10 @@ title: "Entry for Kaggle - Quora Competition"
 author: "Team Members: Germayne Ng, Alson Yap"
 ---
 
+# Competition 
+<br>
+Link to competition details and question: https://www.kaggle.com/c/quora-question-pairs
+
 # Update Logs
 <br>
 
