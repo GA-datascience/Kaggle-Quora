@@ -63,6 +63,9 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
     + https://www.slideshare.net/ShangxuanZhang/kaggle-winning-solution-xgboost-algorithm-let-us-learn-from-its-author
     
     + https://www.slideshare.net/odsc/owen-zhangopen-sourcetoolsanddscompetitions1
+    
+* Xgboost notes by germ: 
+    + https://github.com/germayneng/xgboost-notes/blob/master/README.md
 ---
 
 # To do/ comments
