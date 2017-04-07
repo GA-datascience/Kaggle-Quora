@@ -14,6 +14,11 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 # Update Logs
 <br>
 
+* **Version 1.4 - 7th April 2017:**
+
+  + Added LSA components. However, not sure if the approach i did is the most optimal. We are suppose to make use of TFIDF vectors. However, the function we adopted does not have TFIDF vectors. 
+  + Need to work harder. Getting pushed to 16% and 191 placing. Only 70 positions up to top 10 % 
+  
 * **Version 1.4 - 4th April 2017:**
 
   + Expanded on the TFIDF function (3), Added character count **without** spaces (3) and character count per word (3) 
@@ -51,6 +56,10 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 * Jaccard and Cosine distance: https://www.kaggle.com/heraldxchaos/quora-question-pairs/adventures-in-scikitlearn-and-nltk/run/1040772
     
 * Future reference for new ideas:https://www.kaggle.com/c/quora-question-pairs/discussion/30340#171996
+
+* SVD, LSA components 
+    + http://mccormickml.com/2016/03/25/lsa-for-text-classification-tutorial/
+    + http://www.datascienceassn.org/sites/default/files/users/user1/lsa_presentation_final.pdf
 
 * Xgboost references
     + https://github.com/dmlc/xgboost/blob/master/doc/parameter.md
