@@ -14,6 +14,14 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 # Update Logs
 <br>
 
+
+* **Version 1.5 - 10th April 2017:**
+
+  + Added the LSA component using TFIDF vectors. Still does not give improve the score further.   
+  + Total 38 features. The x_train and x_test is uploaded to dropbox. 
+  + The LSA_char (4 features) and LSA_tfidf (4 features) will be on 2 seperate py file. 
+
+
 * **Version 1.4 - 7th April 2017:**
 
   + Added LSA components. However, not sure if the approach i did is the most optimal. We are suppose to make use of TFIDF vectors. However, the function we adopted does not have TFIDF vectors. 
