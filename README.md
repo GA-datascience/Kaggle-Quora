@@ -20,6 +20,7 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   + Added the LSA component using TFIDF vectors. Still does not give improve the score further.   
   + Total 38 features. The x_train and x_test is uploaded to dropbox. 
   + The LSA_char (4 features) and LSA_tfidf (4 features) will be on 2 seperate py file. 
+  + xgboost2.py (30 features) and LSA py (8 features) 
 
 
 * **Version 1.4 - 7th April 2017:**
