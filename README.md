@@ -3,7 +3,7 @@ title: "Entry for Kaggle - Quora Competition"
 author: "Team Members: Germayne Ng, Alson Yap"
 ---
 
-<center>![quora](https://cloud.githubusercontent.com/assets/22788747/24694479/a7783804-1a14-11e7-8589-40641ffdeb93.png)</center>
+[quora](https://cloud.githubusercontent.com/assets/22788747/24694479/a7783804-1a14-11e7-8589-40641ffdeb93.png)
 
 # Competition 
 <br>
