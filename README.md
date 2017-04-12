@@ -55,6 +55,9 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 
 # References 
 
+![f81e92c0-472b-4770-b808-1abdd9376edf-original](https://cloud.githubusercontent.com/assets/22788747/24948646/85467898-1f9d-11e7-8d68-cdc03a9e9a9e.png)
+
+
 * Initial reference: https://www.kaggle.com/alijs1/quora-question-pairs/xgb-starter-12357/code
 
 * FuzzyWuzzy reference: 
