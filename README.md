@@ -21,10 +21,14 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   
     Model | Score
     --- | --- 
-    38 F. | 0.
-    34 F. (minus LSA TFIDF) | 0.
+    30 F. (minus all LSA) | 0.32624
+    38 F. | 0.32810
+    34 F. (minus LSA TFIDF) | 
     34 F. (minus LSA char) | 0.
+    
+    Seems weird that having more features resulted in an increase of 0.002. 
 
+    
 * **Version 1.5 - 10th April 2017:**
 
   + Added the LSA component using TFIDF vectors. Still does not give improve the score further.   
