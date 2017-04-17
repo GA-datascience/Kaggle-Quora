@@ -15,6 +15,12 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 # Update Logs
 <br>
 
+* **Version 1.5 - 17th April 2017:**
+
+  + Today I will do some testing regarding the features 
+  
+  Model | Score
+  
 
 * **Version 1.5 - 10th April 2017:**
 
