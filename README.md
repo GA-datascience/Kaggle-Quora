@@ -20,7 +20,8 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   + Today I will do some testing regarding the features 
   
   Model | Score
-  
+  --- | --- 
+  38 Features | 0.3
 
 * **Version 1.5 - 10th April 2017:**
 
