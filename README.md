@@ -17,16 +17,8 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 
 * **Version 1.5 - 17th April 2017:**
 
-  + Today I will do some testing regarding the features 
-  
-    Model | Score
-    --- | --- 
-    30 F. (minus all LSA) | 0.32624
-    38 F. | 0.32810
-    34 F. (minus LSA TFIDF) | 
-    34 F. (minus LSA char) | 0.
-    
-    Seems weird that having more features resulted in an increase of 0.002. 
+  + Add manhattan and euclidean distance, BUT note that we only use 1 value, instead of vectors. Could we use LSA to do it????
+  + score improved by a bit 
 
     
 * **Version 1.5 - 10th April 2017:**
