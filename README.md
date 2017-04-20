@@ -29,7 +29,8 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   --- | --- | --- | --- | --- | ---
   question 1 of pair 1 | 0.23 | 0.56 | question 2 of pair 1 | 0.4 | 0.7 
   
-  So, 
+  So, question 1 instead of words is now [0.23 , 0.56] and question 2 [0.4, 0.7].
+  Now as vectors, we then calculate its distances.
 
 * **Version 1.5 - 17th April 2017:**
 
