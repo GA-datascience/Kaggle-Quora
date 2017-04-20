@@ -23,9 +23,10 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   
   
   LSA components: 
-  Basically each question is now a vector in components. I.E. Note the values are arbitary, just for example sake:  
+  Basically each question is now a vector in LSA-TFIDF components. I.E. Note the values are arbitary, just for example sake:  
   
-  question | component 1  | component 2 | question | component 1 | component 2  
+  question | component 1  | component 2 | question | component 1 | component 2
+  --- | --- | --- | --- | --- | ---
   question 1 of pair 1 | 0.23 | 0.56 | question 2 of pair 1 | 0.4 | 0.7 
   
   So, 
