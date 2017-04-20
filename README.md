@@ -20,6 +20,15 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   + Finally best score so far. Managed to make good use of the LSA components features. 
   + Distance features can be further distingused. Alson did the distance for **single** vector. If you define LSA components and apply      distance, it can be a seperate feature. 
   + Based on Alson's functions for distance, I created a euclidean and manhattan function for **single** vector. Essentially, there are     2 features based on euclidean and manhattan distances (total 4 )  
+  
+  
+  LSA components: 
+  Basically each question is now a vector in components. I.E. Note the values are arbitary, just for example sake:  
+  
+  question | component 1  | component 2 | question | component 1 | component 2  
+  question 1 of pair 1 | 0.23 | 0.56 | question 2 of pair 1 | 0.4 | 0.7 
+  
+  So, 
 
 * **Version 1.5 - 17th April 2017:**
 
