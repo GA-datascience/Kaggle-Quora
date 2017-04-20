@@ -32,6 +32,8 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   So, question 1 instead of words is now [0.23 , 0.56] and question 2 [0.4, 0.7].
   Now as vectors, we then calculate its distances.
   
+  + tune 1000 nrounds and lower learning rate to 0.1 = better results.
+  
 * **Version 1.4 - 4th April 2017:**
 
   + Expanded on the TFIDF function (3), Added character count **without** spaces (3) and character count per word (3) 
