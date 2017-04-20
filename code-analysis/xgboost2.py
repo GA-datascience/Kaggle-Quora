@@ -131,26 +131,52 @@ def cosine_dist(row):
     else: 
         return len(a.intersection(b))/d
     
+
+def euclidean_dist(row):
+    a = len(set(str(row['question1'])))
+    b = len(set(str(row['question2'])))
+    d = np.sqrt(np.square(a-b))
+    if (d == 0):
+        return 0
+    else:
+        return d 
+    
+    
+def manhattan_dist(row):
+    a = len(set(str(row['question1'])))
+    b = len(set(str(row['question2'])))
+    d = np.absolute(a-b)
+    if (d == 0):
+        return 0
+    else:
+        return d 
+
+
+
+
+
     
 ################################################################################
 ############################ 3. FEATURES ENGINEERING ###########################
 ################################################################################
 
 
-# Currently 24 features
+# Currently 30 features
     # Set 1 (5 features)
     # 1.1 = Proportion of shared words
     # 1.2 = Ratio of q1's non stopwords
     # 1.3 = Ratio of q2's non stopwords
     # 1.4 = Ratio difference (1.3 - 1.4)
     # 1.5 = Length (number) of shared non stop words
+
     
-    #Set 2 (1 feature)
+    #Set 2 (4 feature)
     # 2.1 = TFIDF of shared words between question pairs
     # 2.2 = TFIDF of q1 
     # 2.3 = TFIDF of q2
+    # 2.4 = TFIDF difference 2.2-2.3
     
-    # Set 3 (6 features)
+    # Set 3 (12 features)
     # 3.1 = Word count in q1
     # 3.2 = Word count in q2
     # 3.3 = Word count difference 
@@ -160,6 +186,9 @@ def cosine_dist(row):
     # 3.7 = Character count in q1 (no spaces)
     # 3.8 = Character count in q2 (no spaces)
     # 3.9 = Character count differences (3.6-3.7)
+    # 3.10 = character per word Q1 
+    # 3.11 = character per word Q2 
+    # 3.12 = difference between 1.6 and 1.7
     
     # Set 4 (7 features - FuzzyWuzzy)
     # 4.1 = QRatio
@@ -170,10 +199,24 @@ def cosine_dist(row):
     # 4.6 = Token set ratio
     # 4.7 = Token sort ratio
     
-    # Set 5 (2 features) (Potential to add more under this set!)
+    # Set 5 (4 features) (Potential to add more under this set!)
+    #
+    # Basic distance features on questions' length  
     # 5.1 = Jaccard distance
     # 5.2 = Cosine distance
-
+    # 5.3 = Euclidean distance 
+    # 5.4 = manhattan distance 
+    
+    # set 6 (LSA components) - because of the complexity, i will seperate set 6 
+    # Distance features based on LSA-TFIDF components 
+    
+    # 6.1 = euclidean 
+    # 6.2 = manhattan 
+    
+    
+    
+    
+    
 ### 3.1) Creation of dataframes for training and testing  ###
 
 x_train = pd.DataFrame() # hold the training set 
@@ -196,10 +239,12 @@ x_train['q2_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[2]))
 x_train['ratio_diff'] = temp_df['allR'].apply(lambda x: float(x.split(':')[3]))
 x_train['shared_words_length'] = temp_df['allR'].apply(lambda x: float(x.split(':')[4]))
 
+
 # Set 2
 x_train['tfidf'] = temp_df['tfidf_all'].apply(lambda x: float(x.split(':')[0]))
 x_train['tfidf_q1'] = temp_df['tfidf_all'].apply(lambda x: float(x.split(':')[1]))
 x_train['tfidf_q2'] = temp_df['tfidf_all'].apply(lambda x: float(x.split(':')[2]))
+x_train['tfidf_diff'] = x_train['tfidf_q1'] - x_train['tfidf_q2'] 
 
 # Set 3
 x_train['q1_word_count'] = df_train['question1'].apply(lambda x: len(str(x).lower().split()))
@@ -214,6 +259,10 @@ x_train['q1_char_count_nospace'] = df_train['question1'].apply(lambda x: len(str
 x_train['q2_char_count_nospace'] = df_train['question2'].apply(lambda x: len(str(x).replace(' ','')))
 x_train['diff_char_count_nospace'] = x_train['q1_char_count_nospace'] - x_train['q2_char_count_nospace'] 
 
+x_train['char_per_word_q1'] = x_train['q1_char_count_nospace'] / x_train['q1_word_count']
+x_train['char_per_word_q2'] = x_train['q2_char_count_nospace'] / x_train['q2_word_count']
+x_train['diff_char_per_word'] = x_train['char_per_word_q1'] - x_train['char_per_word_q2']
+
 # Set 4
 x_train['fuzz_qratio'] = df_train.apply(lambda x: fuzz.QRatio(str(x['question1']), str(x['question2'])), axis=1)
 x_train['fuzz_WRatio'] = df_train.apply(lambda x: fuzz.WRatio(str(x['question1']), str(x['question2'])), axis=1)
@@ -226,6 +275,8 @@ x_train['fuzz_token_sort_ratio'] = df_train.apply(lambda x: fuzz.token_sort_rati
 # Set 5
 x_train['jaccard_dist'] = df_train.apply(jaccard_dist, axis = 1)
 x_train['cosine_dist'] = df_train.apply(cosine_dist, axis = 1)
+x_train['euclidean_dist'] = df_train.apply(euclidean_dist, axis = 1)
+x_train['manhattan_dist'] = df_train.apply(manhattan_dist, axis = 1)
 
 del temp_df
 
@@ -249,6 +300,8 @@ x_test['shared_words_length'] = temp_df_test['allR'].apply(lambda x: float(x.spl
 x_test['tfidf'] = temp_df_test['tfidf_all'].apply(lambda x: float(x.split(':')[0]))
 x_test['tfidf_q1'] = temp_df_test['tfidf_all'].apply(lambda x: float(x.split(':')[1]))
 x_test['tfidf_q2'] = temp_df_test['tfidf_all'].apply(lambda x: float(x.split(':')[2]))
+x_test['tfidf_diff'] = x_test['tfidf_q1'] - x_test['tfidf_q2'] 
+
 
 # Set 3
 x_test['q1_word_count'] = df_test['question1'].apply(lambda x: len(str(x).lower().split()))
@@ -264,6 +317,10 @@ x_test['q1_char_count_nospace'] = df_test['question1'].apply(lambda x: len(str(x
 x_test['q2_char_count_nospace'] = df_test['question2'].apply(lambda x: len(str(x).replace(' ','')))
 x_test['diff_char_count_nospace'] = x_test['q1_char_count_nospace'] - x_test['q2_char_count_nospace'] 
 
+x_test['char_per_word_q1'] = x_test['q1_char_count_nospace'] / x_test['q1_word_count']
+x_test['char_per_word_q2'] = x_test['q2_char_count_nospace'] / x_test['q2_word_count']
+x_test['diff_char_per_word'] = x_test['char_per_word_q1'] - x_test['char_per_word_q2']
+
 # Set 4
 x_test['fuzz_qratio'] = df_test.apply(lambda x: fuzz.QRatio(str(x['question1']), str(x['question2'])), axis=1)
 x_test['fuzz_WRatio'] = df_test.apply(lambda x: fuzz.WRatio(str(x['question1']), str(x['question2'])), axis=1)
@@ -276,10 +333,144 @@ x_test['fuzz_token_sort_ratio'] = df_test.apply(lambda x: fuzz.token_sort_ratio(
 # Set 5
 x_test['jaccard_dist'] = df_test.apply(jaccard_dist, axis = 1)
 x_test['cosine_dist'] = df_test.apply(cosine_dist, axis = 1)
+x_test['euclidean_dist'] = df_test.apply(euclidean_dist, axis = 1)
+x_test['manhattan_dist'] = df_test.apply(manhattan_dist, axis = 1)
+
 
 
 # remove temp 
 del temp_df_test 
+
+
+################################################################################
+################################ LSA components  ###############################
+################################################################################
+
+import sklearn
+# Import all of the scikit learn stuff
+from __future__ import print_function
+from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import Normalizer
+from sklearn import metrics
+from sklearn.cluster import KMeans, MiniBatchKMeans
+
+import pandas as pd 
+import numpy as np
+
+
+
+# https://math.stackexchange.com/questions/139600/how-to-calculate-the-euclidean-and-manhattan-distance
+def euclidean_distance(row):
+    a1 = row['q1_c1']
+    b1 = row['q1_c2']
+    
+    a2 = row['q2_c1']
+    b2 = row['q2_c2']
+    
+    v = np.sqrt( np.square(a1 - a2) + np.square(b1 - b2) )
+    return v 
+
+
+def manhattan_distance(row):
+    a1 = row['q1_c1']
+    b1 = row['q1_c2']
+    
+    a2 = row['q2_c1']
+    b2 = row['q2_c2']
+
+    v = np.absolute(a1 - a2) + np.absolute(b1 -b2)
+    return v 
+
+    
+# make the entire training set as 1 document. 
+# transform q1 and q2 to linear combinations of LSA 
+
+# recall, index 1-404290 is q1, 404291 to 808582
+train_qs = pd.Series(df_train['question1'].tolist() + df_train['question2'].tolist()).astype(str)
+
+train_qs = train_qs.tolist()
+vectorizer = TfidfVectorizer(min_df = 1, stop_words = 'english')
+dtm = vectorizer.fit_transform(train_qs) 
+
+
+
+lsa = TruncatedSVD(2, algorithm = 'randomized')
+dtm_lsa = lsa.fit_transform(dtm)
+dtm_lsa = Normalizer(copy=False).fit_transform(dtm_lsa)
+
+# lets view 
+pd.DataFrame(dtm_lsa, index = train_qs, columns = ["component_1","component_2"])
+
+# convert to DF
+temp_component_train = pd.DataFrame(dtm_lsa, columns = ["component_1","component_2"])
+  
+# now we need to split them 
+temp_component_train_q1 = temp_component_train[:404290]
+temp_component_train_q2 = temp_component_train[404290:808580]
+temp_component_train_q2.index = range(404290)
+
+# recombine them 
+temp_train_vector = pd.DataFrame()
+temp_train_vector['q1_c1'] = temp_component_train_q1['component_1']
+temp_train_vector['q1_c2'] = temp_component_train_q1['component_2']
+temp_train_vector['q2_c1'] = temp_component_train_q2['component_1']
+temp_train_vector['q2_c2'] = temp_component_train_q2['component_2']
+
+# remove 
+del temp_component_train_q1, temp_component_train_q2, temp_component_train
+
+# lets do some distancing features  
+distances = pd.DataFrame()
+distances['euclidean'] = temp_train_vector.apply(euclidean_distance, axis = 1)
+distances['manhattan'] = temp_train_vector.apply(manhattan_distance, axis = 1)
+
+distances.to_csv('lsa_distance.csv',index = False)
+
+# do for test set 
+
+test_qs = pd.Series(df_test['question1'].tolist() + df_test['question2'].tolist()).astype(str)
+
+test_qs = test_qs.tolist()
+vectorizer = TfidfVectorizer(min_df = 1, stop_words = 'english')
+dtm2 = vectorizer.fit_transform(test_qs)
+
+lsa = TruncatedSVD(2, algorithm = 'randomized')
+dtm_lsa2 = lsa.fit_transform(dtm2)
+dtm_lsa2 = Normalizer(copy=False).fit_transform(dtm_lsa2)
+temp_component_test = pd.DataFrame(dtm_lsa2, columns = ["component_1","component_2"])
+
+# now we need to split them 
+temp_component_test_q1 = temp_component_test[:2345796]
+temp_component_test_q2 = temp_component_test[2345796:4691592]
+temp_component_test_q2.index = range(2345796)
+
+temp_test_vector = pd.DataFrame()
+temp_test_vector['q1_c1'] = temp_component_test_q1['component_1']
+temp_test_vector['q1_c2'] = temp_component_test_q1['component_2']
+temp_test_vector['q2_c1'] = temp_component_test_q2['component_1']
+temp_test_vector['q2_c2'] = temp_component_test_q2['component_2']
+
+del temp_component_test, temp_component_test_q1, temp_component_test_q2
+
+# lets do some distancing features  
+distances_test = pd.DataFrame()
+distances_test['euclidean'] = temp_test_vector.apply(euclidean_distance, axis = 1)
+distances_test['manhattan'] = temp_test_vector.apply(manhattan_distance, axis = 1)
+
+
+# add back to x_train and x_test as features 
+
+
+
+# new features 
+x_train['euclidean'] = distances['euclidean']
+x_train['manhattan'] = distances['manhattan']
+
+x_test['euclidean'] = distances_test['euclidean']
+x_test['manhattan'] = distances_test['manhattan']
+ 
 
 ################################################################################
 ################################ 4. TRAINING SAMPLES ###########################
@@ -337,7 +528,16 @@ watchlist = [(xg_train, 'train'), (xg_valid, 'valid')]
 # [499] train-logloss:0.316258  valid-logloss:0.32599 (12 + 7 fuzzywuzzy features)
 # [499] train-logloss:0.309309  valid-logloss:0.322939 (eta increased to 0.15)
 # [499] train-logloss:0.302894  valid-logloss:0.318291 (24 features, added no space character counts)
-bst = xgb.train(params, xg_train, 500, watchlist)
+# [499] train-logloss:0.294968  valid-logloss:0.310598 (27 features)
+#  [499]   train-logloss:0.284764  valid-logloss:0.301273
+# (LSA components. Very good results but disappointing score. is it overfitting?)
+
+# [499]   train-logloss:0.279368  valid-logloss:0.29681
+# (more LSA features 38 features total)
+
+# stop iteration if no improvement for 30 rounds 
+# where train set improves but test set does not    
+bst = xgb.train(params, xg_train, 500, watchlist, early_stopping_rounds = 30)
 
 
 ### 5.4) Test the model  ###
@@ -347,8 +547,8 @@ output_result = bst.predict(xg_test)
 
 ### 5.5) Write out submission into csv file  ###
 # Woof woof
-tensub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
-tensub.to_csv('ten.csv',index = False)
+outputsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
+outputsub.to_csv('rename_sub.csv',index = False)
 
 
 ################################################################################
@@ -356,7 +556,7 @@ tensub.to_csv('ten.csv',index = False)
 ################################################################################
 
 
-variables_important = bst.get_fscore() # dict
+variables_important = bst.get_fscore() # dict, check type()
 score_df = pd.DataFrame()
 score_df['variables'] = variables_important.keys()
 score_df['f_score'] = variables_important.values()
@@ -366,3 +566,4 @@ score_df.plot(kind= 'barh', x='variables',y='f_score', legend = False)
 
 plt.rcParams['figure.figsize'] = (7.0, 7.0)
 xgb.plot_importance(bst); plt.show()
+ 
