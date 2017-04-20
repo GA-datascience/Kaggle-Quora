@@ -15,7 +15,7 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 # Update Logs
 <br>
 
-* **Version 1.6 - 20th April 2017:**
+* **Version 1.5 - 20th April 2017:**
 
   + Finally best score so far. Managed to make good use of the LSA components features. 
   + Distance features can be further distingused. Alson did the distance for **single** vector. If you define LSA components and apply      distance, it can be a seperate feature. 
@@ -31,25 +31,6 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   
   So, question 1 instead of words is now [0.23 , 0.56] and question 2 [0.4, 0.7].
   Now as vectors, we then calculate its distances.
-
-* **Version 1.5 - 17th April 2017:**
-
-  + Add manhattan and euclidean distance, BUT note that we only use 1 value, instead of vectors. Could we use LSA to do it????
-  + score improved by a bit 
-
-    
-* **Version 1.5 - 10th April 2017:**
-
-  + Added the LSA component using TFIDF vectors. Still does not give improve the score further.   
-  + Total 38 features. The x_train and x_test is uploaded to dropbox. 
-  + The LSA_char (4 features) and LSA_tfidf (4 features) will be on 2 seperate py file. 
-  + xgboost2.py (30 features) and LSA py (8 features) 
-
-
-* **Version 1.4 - 7th April 2017:**
-
-  + Added LSA components. However, not sure if the approach i did is the most optimal. We are suppose to make use of TFIDF vectors. However, the function we adopted does not have TFIDF vectors. 
-  + Need to work harder. Getting pushed to 16% and 191 placing. Only 70 positions up to top 10 % 
   
 * **Version 1.4 - 4th April 2017:**
 
