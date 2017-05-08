@@ -61,4 +61,4 @@ result <- predict(rf_test, newdata = x_test)
 
 # export the result 
 submission <- data.frame(is_duplicate = result, test_id = df_test[,"test_id"])
-
+write.csv(submission,'randomforest.csv',row.names = FALSE) 
