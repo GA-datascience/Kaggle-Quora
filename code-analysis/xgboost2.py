@@ -31,7 +31,7 @@ df_test = pd.read_csv('test.csv')
 ############################## 2. DEFINE FUNCTIONS #############################
 ################################################################################
 
-### 2.1) Function 1: Shared words (5 features)  ###
+### 2.1) Set 1: Shared words (5 features)  ###
 
 stops = set(stopwords.words("english"))
     
@@ -69,7 +69,7 @@ def shared_words(row):
     return '{}:{}:{}:{}:{}'.format(R,R1,R2,R3,R4)
     
 
-### 2.2) Function 2: TDIDF (1 feature)  ###
+### 2.2) Set 2: TDIDF (4 features)  ###
 
 def get_weight(count, eps=10000, min_count=2):
     if count < min_count:
@@ -115,12 +115,13 @@ def tfidf_word_match_share(row):
     
     return '{}:{}:{}'.format(R,R1,R2)
 
-### 2.3) Function 3: Jaccard Distance (1 feature)  ###
-
+### 2.3) Set 5: Distances (Jaccard, Cosine, Euclidean, Manhattan) (2 features) ###
+# Side note: Euclidean and manhattan currently not included in final script
+    
+    
 def jaccard_dist(row):
     return jaccard_distance(set(str(row['question1'])), set(str(row['question2'])))
     
-### 2.4) Function 4: Cosine Distance (1 feature)  ###
 
 def cosine_dist(row):
     a = set(str(row['question1']))
@@ -170,11 +171,11 @@ def manhattan_dist(row):
     # 1.5 = Length (number) of shared non stop words
 
     
-    #Set 2 (4 feature)
+    #Set 2 (4 features)
     # 2.1 = TFIDF of shared words between question pairs
     # 2.2 = TFIDF of q1 
     # 2.3 = TFIDF of q2
-    # 2.4 = TFIDF difference 2.2-2.3
+    # 2.4 = TFIDF difference between 2.2 - 2.3
     
     # Set 3 (12 features)
     # 3.1 = Word count in q1
@@ -186,9 +187,9 @@ def manhattan_dist(row):
     # 3.7 = Character count in q1 (no spaces)
     # 3.8 = Character count in q2 (no spaces)
     # 3.9 = Character count differences (3.6-3.7)
-    # 3.10 = character per word Q1 
-    # 3.11 = character per word Q2 
-    # 3.12 = difference between 1.6 and 1.7
+    # 3.10 = Character per word Q1 
+    # 3.11 = Character per word Q2 
+    # 3.12 = Difference between 1.6 and 1.7
     
     # Set 4 (7 features - FuzzyWuzzy)
     # 4.1 = QRatio
@@ -205,9 +206,9 @@ def manhattan_dist(row):
     # 5.1 = Jaccard distance
     # 5.2 = Cosine distance
     # 5.3 = Euclidean distance 
-    # 5.4 = manhattan distance 
+    # 5.4 = Manhattan distance 
     
-    # set 6 (LSA components) - because of the complexity, i will seperate set 6 
+    # set 6 (LSA components) - because of the complexity, i will separate set 6 
     # Distance features based on LSA-TFIDF components 
     
     # 6.1 = euclidean 
