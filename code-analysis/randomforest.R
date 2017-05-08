@@ -60,6 +60,6 @@ x_test[is.na(x_test)] <- 0
 result <- predict(rf_test, newdata = x_test, type = "prob")
 
 # export the result 
-submission <- data.frame(is_duplicate = result[,2], test_id = df_test[,"test_id"])
-write.csv(submission,'randomforest.csv',row.names = FALSE) 
-
+submission <- data.table(is_duplicate = result[,2],  df_test[,"test_id"])
+#write.csv(submission,'randomforest.csv',row.names = FALSE) 
+fwrite(submission,'sub.csv')
