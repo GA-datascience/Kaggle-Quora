@@ -18,6 +18,7 @@ library(randomForest)
 # import data file 
 x_train <- fread('x_train_r.csv')
 y_train <- fread('y_train_r.csv')
+y_train <- y_train[,-1]
 df_test <- fread('test.csv')
 df <- cbind(x_train,y_train)
 
@@ -35,16 +36,28 @@ df$is_duplicate <- as.factor(df$is_duplicate)
 # random forest training 
 # due to memory constraint, we train in smaller sets
 # we set to smaller trees and combine them at the end. total 500 trees 
+set.seed(100)
 rf_1 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(200)
 rf_2 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(300)
 rf_3 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(400)
 rf_4 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
-rf_5 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(500)
+rf_5 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)rfO
+set.seed(123)
 rf_6 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(246)
 rf_7 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(234)
 rf_8 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(456)
 rf_9 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(619)
 rf_10 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
+set.seed(123123)
+rf_11 <- randomForest(x = df[,-39], y = df$is_duplicate, ntree = 50, data = df)
 
 rf_total <- combine(rf_1,rf_2,rf_3,rf_4,rf_5, rf_6, rf_7, rf_8, rf_9, rf_10) 
 
@@ -57,9 +70,9 @@ x_test <- fread('x_test.csv')
 x_test[is.na(x_test)] <- 0
 
 # run the model on the test set 
-result <- predict(rf_test, newdata = x_test, type = "prob")
+result <- predict(rf_total, newdata = x_test, type = "prob")
 
 # export the result 
 submission <- data.table(is_duplicate = result[,2],  df_test[,"test_id"])
 #write.csv(submission,'randomforest.csv',row.names = FALSE) 
-fwrite(submission,'sub.csv')
+fwrite(submission,'11randomforests.csv')
