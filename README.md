@@ -93,6 +93,9 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
     
 * Xgboost notes by germ: 
     + https://github.com/germayneng/xgboost-notes/blob/master/README.md
+    
+* Ensemble methods: 
+    + https://mlwave.com/kaggle-ensembling-guide/
 ---
 
 # To do/ comments
