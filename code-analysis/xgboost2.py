@@ -162,7 +162,7 @@ def manhattan_dist(row):
 ################################################################################
 
 
-# Currently 30 features
+# Currently 38 features
     # Set 1 (5 features)
     # 1.1 = Proportion of shared words
     # 1.2 = Ratio of q1's non stopwords
@@ -208,12 +208,18 @@ def manhattan_dist(row):
     # 5.3 = Euclidean distance 
     # 5.4 = Manhattan distance 
     
-    # set 6 (LSA components) - because of the complexity, i will separate set 6 
+    # Set 6 (2 LSA features) - because of the complexity, i will separate set 6 
     # Distance features based on LSA-TFIDF components 
+    #
+    # 6.1 = Euclidean distance on LSA
+    # 6.2 = Manhattan distance on LSA
     
-    # 6.1 = euclidean 
-    # 6.2 = manhattan 
-    
+    # Set 7 (4 'Magic' features) 
+    #
+    # 7.1 = Hash1 
+    # 7.2 = Hash2
+    # 7.3 = Freq of Hash1
+    # 7.4 = Freq of Hash2
     
     
     
@@ -467,7 +473,83 @@ x_train['manhattan'] = distances['manhattan']
 
 x_test['euclidean'] = distances_test['euclidean']
 x_test['manhattan'] = distances_test['manhattan']
- 
+
+
+################################################################################
+################################ Magic Features ################################
+################################################################################
+
+# Create duplicates of the df_train and df_test sets
+df1 = df_train[['question1']].copy()
+df2 = df_train[['question2']].copy()
+df1_test = df_test[['question1']].copy()
+df2_test = df_test[['question2']].copy()
+
+# Rename the question2 column to question1
+df2.rename(columns = {'question2':'question1'},inplace=True)
+df2_test.rename(columns = {'question2':'question1'},inplace=True)
+
+# Append all the questions to 1 single column
+train_questions = df1.append(df2)
+train_questions = train_questions.append(df1_test)
+train_questions = train_questions.append(df2_test)
+
+train_questions.drop_duplicates(subset = ['question1'],inplace=True)
+
+train_questions.reset_index(inplace=True,drop=True)
+
+# Create a dictionary, key = question, value = an unique 'ID' assigned to the question
+questions_dict = pd.Series(train_questions.index.values,index=train_questions.question1.values).to_dict()
+
+# Create duplicates of the df_train and df_test sets
+train_cp = df_train.copy()
+test_cp = df_test.copy()
+
+# Drop the qid1 and qid2 columns
+train_cp.drop(['qid1','qid2'],axis=1,inplace=True)
+
+# Change the is_duplicate values to -1 so that it can be separated easily from train set
+test_cp['is_duplicate'] = -1
+test_cp.rename(columns={'test_id':'id'},inplace=True)
+
+# Does a 'rbind' between the train set and test set into one single dataframe set
+comb = pd.concat([train_cp,test_cp])
+
+# Generates the 2 features - assign the unique id to the corresponding question
+comb['q1_hash'] = comb['question1'].map(questions_dict)
+comb['q2_hash'] = comb['question2'].map(questions_dict)
+
+# Creates 2 dictionaries:
+    # q1_vc counts the number of hash ID occurences among all question1's
+    # q1_vc counts the number of hash ID occurences among all question2's
+q1_vc = comb.q1_hash.value_counts().to_dict()
+q2_vc = comb.q2_hash.value_counts().to_dict()
+
+def try_apply_dict(x,dict_to_apply):
+    try:
+        return dict_to_apply[x]
+    except KeyError:
+        return 0
+    
+# Map to frequency space
+# q1_freq = number of occurences for question1 in q1_vc + q2_vc
+# q2_freq = number of occurences for question2 in q1_vc + q2_vc
+comb['q1_freq'] = comb['q1_hash'].map(lambda x: try_apply_dict(x,q1_vc) + try_apply_dict(x,q2_vc))
+comb['q2_freq'] = comb['q2_hash'].map(lambda x: try_apply_dict(x,q1_vc) + try_apply_dict(x,q2_vc))
+
+# Splits up the comb dataset into train_comb and test_comb 
+train_comb = comb[comb['is_duplicate'] >= 0][['id','q1_hash','q2_hash','q1_freq','q2_freq','is_duplicate']]
+test_comb = comb[comb['is_duplicate'] < 0][['id','q1_hash','q2_hash','q1_freq','q2_freq']]
+
+# Transfer the generated features into x_train and x_test
+features = ['q1_hash','q2_hash','q1_freq','q2_freq']
+x_train[features] = train_comb[features]
+x_test[features] = test_comb[features]
+
+# Delete the generated variables in 'Magic Features' script
+del train_questions, train_cp, test_cp, comb, train_comb, test_comb, q1_vc, q2_vc, features
+
+
 
 ################################################################################
 ################################ 4. TRAINING SAMPLES ###########################
