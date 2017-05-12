@@ -614,6 +614,7 @@ watchlist = [(xg_train, 'train'), (xg_valid, 'valid')]
 # [499]   train-logloss:0.279368  valid-logloss:0.29681
 # (more LSA features 38 features total)
 # [999]   train-logloss:0.207013  valid-logloss:0.225871 (34 features + 4 magic features)
+# [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 + 13 abhi features)
 
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not    
@@ -628,6 +629,7 @@ output_result = bst.predict(xg_test)
 ### 5.5) Write out submission into csv file  ###
 # Woof woof
 outputsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
+outputsub.to_csv('38features_13abhifeatures.csv',index = False)
 outputsub.to_csv('rename_sub.csv',index = False)
 
 
@@ -644,6 +646,6 @@ score_df.plot(kind= 'barh', x='variables',y='f_score', legend = False)
 
 ## Alternatively, run this for better visualization
 
-plt.rcParams['figure.figsize'] = (7.0, 7.0)
+plt.rcParams['figure.figsize'] = (9.0, 9.0)
 xgb.plot_importance(bst); plt.show()
  
