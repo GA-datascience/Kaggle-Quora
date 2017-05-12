@@ -357,10 +357,6 @@ from sklearn.preprocessing import Normalizer
 from sklearn import metrics
 from sklearn.cluster import KMeans, MiniBatchKMeans
 
-import pandas as pd 
-import numpy as np
-
-
 
 # https://math.stackexchange.com/questions/139600/how-to-calculate-the-euclidean-and-manhattan-distance
 def euclidean_distance(row):
@@ -507,7 +503,7 @@ x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_siz
 
 ### 5.1) Setting the model parameters  ###
 params = {} # dict 
-params['eta'] = 0.15
+params['eta'] = 0.1
 params['max_depth'] = 5 
 params['objective'] = 'binary:logistic'
 params['eval_metric'] = 'logloss'
@@ -535,10 +531,11 @@ watchlist = [(xg_train, 'train'), (xg_valid, 'valid')]
 
 # [499]   train-logloss:0.279368  valid-logloss:0.29681
 # (more LSA features 38 features total)
+# [999]   train-logloss:0.207013  valid-logloss:0.225871 (34 features + 4 magic features)
 
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not    
-bst = xgb.train(params, xg_train, 500, watchlist, early_stopping_rounds = 30)
+bst = xgb.train(params, xg_train, 1000, watchlist, early_stopping_rounds = 30)
 
 
 ### 5.4) Test the model  ###
