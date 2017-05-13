@@ -15,6 +15,19 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 # Update Logs
 <br>
 
+* **Version 1.6 - 13th May 2017:**
+  
+  + Revamp LSA features, based on train and test data as 'document' as opposed to referencing them seperately. 
+  + 6 new features: LSA Q1 component 1, 2 , Q2 component 1, 2 and 2 distancing based on the components 
+  + total 55. (note that 2 features will overwrite the old distancing features, so 4 new additions)
+  + score - 0.27XX
+  
+* **Version 1.6 - 12th May 2017:**
+
+  + Added 4 magic features - 0.30XX 
+  + Added AB 12 features - 0.28XX 
+  + Total 51 features 
+  
 * **Version 1.5 - 20th April 2017:**
 
   + Finally best score so far. Managed to make good use of the LSA components features. 
