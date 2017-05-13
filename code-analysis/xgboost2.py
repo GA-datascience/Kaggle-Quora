@@ -208,11 +208,14 @@ def manhattan_dist(row):
     # 5.3 = Euclidean distance 
     # 5.4 = Manhattan distance 
     
-    # Set 6 (2 LSA features) - because of the complexity, i will separate set 6 
+    # Set 6 (6 LSA features) - because of the complexity, i will separate set 6 
     # Distance features based on LSA-TFIDF components 
     #
     # 6.1 = Euclidean distance on LSA
     # 6.2 = Manhattan distance on LSA
+    # 6.3 = Q1 component 1 and 2 (2 features)
+    # 6.4 = Q2 compinent 1 and 2 (2 features)
+    
     
     # Set 7 (4 'Magic' features) 
     #
@@ -349,6 +352,7 @@ x_test['manhattan_dist'] = df_test.apply(manhattan_dist, axis = 1)
 del temp_df_test 
 
 
+
 ################################################################################
 ################################ LSA components  ###############################
 ################################################################################
@@ -391,11 +395,11 @@ def manhattan_distance(row):
 # transform q1 and q2 to linear combinations of LSA 
 
 # recall, index 1-404290 is q1, 404291 to 808582
-train_qs = pd.Series(df_train['question1'].tolist() + df_train['question2'].tolist()).astype(str)
+all_qs = pd.Series(df_train['question1'].tolist() + df_train['question2'].tolist() + df_test['question1'].tolist() + df_test['question2'].tolist()).astype(str)
 
-train_qs = train_qs.tolist()
+all_qs = all_qs.tolist()
 vectorizer = TfidfVectorizer(min_df = 1, stop_words = 'english')
-dtm = vectorizer.fit_transform(train_qs) 
+dtm = vectorizer.fit_transform(all_qs) 
 
 
 
@@ -404,15 +408,23 @@ dtm_lsa = lsa.fit_transform(dtm)
 dtm_lsa = Normalizer(copy=False).fit_transform(dtm_lsa)
 
 # lets view 
-pd.DataFrame(dtm_lsa, index = train_qs, columns = ["component_1","component_2"])
+pd.DataFrame(dtm_lsa, index = all_qs, columns = ["component_1","component_2"])
 
 # convert to DF
-temp_component_train = pd.DataFrame(dtm_lsa, columns = ["component_1","component_2"])
+temp_component = pd.DataFrame(dtm_lsa, columns = ["component_1","component_2"])
   
 # now we need to split them 
-temp_component_train_q1 = temp_component_train[:404290]
-temp_component_train_q2 = temp_component_train[404290:808580]
+temp_component_train_q1 = temp_component[:404290]
+temp_component_train_q2 = temp_component[404290:808580]
 temp_component_train_q2.index = range(404290)
+
+
+temp_component_test_q1 = temp_component[808580:3154376]
+temp_component_test_q2 = temp_component[3154376:5500172]
+temp_component_test_q1.index = range(2345796)
+temp_component_test_q2.index = range(2345796)
+
+
 
 # recombine them 
 temp_train_vector = pd.DataFrame()
@@ -422,32 +434,10 @@ temp_train_vector['q2_c1'] = temp_component_train_q2['component_1']
 temp_train_vector['q2_c2'] = temp_component_train_q2['component_2']
 
 # remove 
-del temp_component_train_q1, temp_component_train_q2, temp_component_train
+del temp_component_train_q1, temp_component_train_q2
 
-# lets do some distancing features  
-distances = pd.DataFrame()
-distances['euclidean'] = temp_train_vector.apply(euclidean_distance, axis = 1)
-distances['manhattan'] = temp_train_vector.apply(manhattan_distance, axis = 1)
-
-distances.to_csv('lsa_distance.csv',index = False)
 
 # do for test set 
-
-test_qs = pd.Series(df_test['question1'].tolist() + df_test['question2'].tolist()).astype(str)
-
-test_qs = test_qs.tolist()
-vectorizer = TfidfVectorizer(min_df = 1, stop_words = 'english')
-dtm2 = vectorizer.fit_transform(test_qs)
-
-lsa = TruncatedSVD(2, algorithm = 'randomized')
-dtm_lsa2 = lsa.fit_transform(dtm2)
-dtm_lsa2 = Normalizer(copy=False).fit_transform(dtm_lsa2)
-temp_component_test = pd.DataFrame(dtm_lsa2, columns = ["component_1","component_2"])
-
-# now we need to split them 
-temp_component_test_q1 = temp_component_test[:2345796]
-temp_component_test_q2 = temp_component_test[2345796:4691592]
-temp_component_test_q2.index = range(2345796)
 
 temp_test_vector = pd.DataFrame()
 temp_test_vector['q1_c1'] = temp_component_test_q1['component_1']
@@ -455,9 +445,22 @@ temp_test_vector['q1_c2'] = temp_component_test_q1['component_2']
 temp_test_vector['q2_c1'] = temp_component_test_q2['component_1']
 temp_test_vector['q2_c2'] = temp_component_test_q2['component_2']
 
-del temp_component_test, temp_component_test_q1, temp_component_test_q2
+del temp_component_test_q1, temp_component_test_q2
 
+
+
+#######################################
 # lets do some distancing features  
+#######################################
+
+
+distances = pd.DataFrame()
+distances['euclidean'] = temp_train_vector.apply(euclidean_distance, axis = 1)
+distances['manhattan'] = temp_train_vector.apply(manhattan_distance, axis = 1)
+
+
+
+# for the test
 distances_test = pd.DataFrame()
 distances_test['euclidean'] = temp_test_vector.apply(euclidean_distance, axis = 1)
 distances_test['manhattan'] = temp_test_vector.apply(manhattan_distance, axis = 1)
@@ -466,13 +469,24 @@ distances_test['manhattan'] = temp_test_vector.apply(manhattan_distance, axis = 
 # add back to x_train and x_test as features 
 
 
-
-# new features 
+# 6 new features 
 x_train['euclidean'] = distances['euclidean']
 x_train['manhattan'] = distances['manhattan']
 
+x_train['q1_c1'] = temp_train_vector['q1_c1'] 
+x_train['q1_c2'] = temp_train_vector['q1_c2'] 
+x_train['q2_c1'] = temp_train_vector['q2_c1'] 
+x_train['q2_c2'] = temp_train_vector['q2_c2']
+
+
 x_test['euclidean'] = distances_test['euclidean']
 x_test['manhattan'] = distances_test['manhattan']
+
+x_test['q1_c1'] = temp_test_vector['q1_c1'] 
+x_test['q1_c2'] = temp_test_vector['q1_c2'] 
+x_test['q2_c1'] = temp_test_vector['q2_c1'] 
+x_test['q2_c2'] = temp_test_vector['q2_c2']
+
 
 
 ################################################################################
@@ -576,11 +590,17 @@ y_train = (np.zeros(len(pos_train)) + 1).tolist() + np.zeros(len(neg_train)).tol
 del pos_train, neg_train
 
 
-x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = 0.2, random_state = random)
 
+x_train_cv, x_valid, y_train_cv, y_valid = train_test_split(x_train, y_train, test_size = 0.2, random_state = random)
 
 ################################################################################
-################################# 5. XGBOOST MODEL #############################
+################################# 5. XGBOOST ###################################
+################################################################################
+
+# Go straight to 5a then 5c to run model for submittion
+
+################################################################################
+################################# 5.a PARAMETERS #############################
 ################################################################################
 
 ### 5.1) Setting the model parameters  ###
@@ -592,13 +612,22 @@ params['eval_metric'] = 'logloss'
 params['seed'] = random
 
 
+################################################################################
+################################# 5.b Cross validate ###########################
+################################################################################
+
+# WARNING: 
+# DO NOT RUN THIS ENITRE SECTION IF WE WANT TO MODEL TO SUBMIT. THIS WILL 
+# ONLY CREATE A MODEL CONSISTING OF 80% OF TRAIN SET     
+    
+
+# USE THIS STEP TO OBTAIN IDEAL NROUNDS AND CHECK OVERFITTING
+
 ### 5.2) Concatenates the information into DMatrix for training ###
-xg_train = xgb.DMatrix(x_train, label = y_train) # train set input into xgb
+xg_train_cv = xgb.DMatrix(x_train_cv, label = y_train_cv) # train set input into xgb
 xg_valid = xgb.DMatrix(x_valid, label = y_valid) # valid (test) set input. 
 
-watchlist = [(xg_train, 'train'), (xg_valid, 'valid')]
-
-
+watchlist_cv = [(xg_train_cv, 'train'), (xg_valid, 'valid')]
 ### 5.3) Runs the model  ###
 # start modelling and training on the train and valid df (split from x_train and y_train)
 # 
@@ -616,9 +645,29 @@ watchlist = [(xg_train, 'train'), (xg_valid, 'valid')]
 # [999]   train-logloss:0.207013  valid-logloss:0.225871 (34 features + 4 magic features)
 # [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 + 13 abhi features)
 
+
+#[999]   train-logloss:0.200331
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not    
-bst = xgb.train(params, xg_train, 1000, watchlist, early_stopping_rounds = 30)
+
+
+bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_rounds = 30)
+
+
+
+################################################################################
+################################# 5.b Xgboost ##################################
+################################################################################
+
+
+# lets train the entire train set 
+
+xg_train = xgb.DMatrix(x_train, label = y_train) # train set input into xgb
+ 
+watchlist = [(xg_train, 'train')]
+
+# train on entire train set 
+bst = xgb.train(params, xg_train, 1000, watchlist)
 
 
 ### 5.4) Test the model  ###
@@ -629,7 +678,7 @@ output_result = bst.predict(xg_test)
 ### 5.5) Write out submission into csv file  ###
 # Woof woof
 outputsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_result})
-outputsub.to_csv('38features_13abhifeatures.csv',index = False)
+
 outputsub.to_csv('rename_sub.csv',index = False)
 
 
