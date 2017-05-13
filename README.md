@@ -20,6 +20,7 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   + Revamp LSA features, based on train and test data as 'document' as opposed to referencing them seperately. 
   + 6 new features: LSA Q1 component 1, 2 , Q2 component 1, 2 and 2 distancing based on the components 
   + total 55. (note that 2 features will overwrite the old distancing features, so 4 new additions)
+  + Major change in xgboost.py script: ** I have split section 5 into a,b,c. For Cross validation, do 5a> 5b. For modelling to submit, do 5a > 5c, skip 5b. Mainly to use full training set to modelling. **
   + score - 0.27XX
   
 * **Version 1.6 - 12th May 2017:**
