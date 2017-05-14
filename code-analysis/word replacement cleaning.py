@@ -17,7 +17,7 @@ def text_to_wordlist(text):
     
     text = re.sub("’", "'", text) # special single quote
     text = re.sub("`", "'", text) # special single quote
-    text = re.sub("“", "'", text) # special double quote
+    text = re.sub('“', '"', text) # special double quote
     text = re.sub("？", "?", text) 
     text = re.sub("…", " ", text) 
     text = re.sub("é", "e", text) 
@@ -123,26 +123,30 @@ def text_to_wordlist(text):
 def process_questions(question_list, questions, question_list_name, dataframe):
     '''transform questions and display progress'''
     for question in questions:
+        question = str(question)
         question_list.append(text_to_wordlist(question))
         if len(question_list) % 100000 == 0:
             progress = len(question_list)/len(dataframe) * 100
             print("{} is {}% complete.".format(question_list_name, round(progress, 1)))
             
 
-from multiprocessing import Pool
 
-def process_questions(questions):
-    processed = []
-    for question in questions:
-        processed.append(text_to_wordlist(question))
-        if len(questions) % 100000 == 0:
-            progress = len(processed)/len(questions) * 100
-            print("Question list is {}% complete.".format(round(progress, 1)))
-    return processed
-
-pool = Pool(processes = 2)
-result = pool.map(process_questions, df_train.question1)
-            
+#==============================================================================
+# from multiprocessing import Pool
+# 
+# def process_questions(questions):
+#     processed = []
+#     for question in questions:
+#         processed.append(text_to_wordlist(question))
+#         if len(questions) % 100000 == 0:
+#             progress = len(processed)/len(questions) * 100
+#             print("Question list is {}% complete.".format(round(progress, 1)))
+#     return processed
+# 
+# pool = Pool(processes = 2)
+# result = pool.map(process_questions, df_train.question1)
+#==============================================================================
+        
             
 # Execution            
 train_question1 = []
