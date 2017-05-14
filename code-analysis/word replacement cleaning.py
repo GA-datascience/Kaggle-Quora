@@ -17,7 +17,7 @@ def text_to_wordlist(text):
     
     text = re.sub("’", "'", text) # special single quote
     text = re.sub("`", "'", text) # special single quote
-    text = re.sub("“", '"', text) # special double quote
+    text = re.sub("“", "'", text) # special double quote
     text = re.sub("？", "?", text) 
     text = re.sub("…", " ", text) 
     text = re.sub("é", "e", text) 
@@ -156,3 +156,7 @@ process_questions(test_question1, df_test.question1, 'test_question1', df_test)
 
 test_question2 = []
 process_questions(test_question2, df_test.question2, 'test_question2', df_test)
+
+# Push back to the x_train and x_test files
+
+df_train['question1'] = pd.Series()
