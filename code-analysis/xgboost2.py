@@ -224,6 +224,20 @@ def manhattan_dist(row):
     # 7.3 = Freq of Hash1
     # 7.4 = Freq of Hash2
     
+    # Set 8 (Additional Abhishek's features concerning word2vec, 13 features)
+    # 8.1 = Word mover distance
+    # 8.2 = Normalized word mover distance
+    # 8.3 = Cosine distance btwn vectors of q1 and q2
+    # 8.4 = Manhattan distance btwn vectors of q1 and q2
+    # 8.5 = Jaccard distance btwn vectors of q1 and q2
+    # 8.6 = Canberra distance btwn vectors of q1 and q2
+    # 8.7 = Euclidean distance btwn vectors of q1 and q2
+    # 8.8 = Minkowski distance btwn vectors of q1 and q2
+    # 8.9 = Braycurtis distance btwn vectors of q1 and q2
+    # 8.10 = Skew of q1 vector
+    # 8.11 = Skew of q2 vector
+    # 8.12 = Kurtosis of q1 vector
+    # 8.13 = Kurtosis of q2 vector
     
     
     
@@ -597,7 +611,7 @@ x_train_cv, x_valid, y_train_cv, y_valid = train_test_split(x_train, y_train, te
 ################################# 5. XGBOOST ###################################
 ################################################################################
 
-# Go straight to 5a then 5c to run model for submittion
+# Go straight to 5a then 5c to run model for submission
 
 ################################################################################
 ################################# 5.a PARAMETERS #############################
