@@ -22,10 +22,13 @@ np.random.seed(random)
 
 #### 1.2) Read the data ###
 
-# For reading in the spell corrected df_train file
-# df_train = pd.read_csv('df_train_corrected.csv', encoding = "ISO-8859-1")
-df_train = pd.read_csv('train.csv')
-df_test = pd.read_csv('test.csv')
+
+df_train = pd.read_csv('train_corrected.csv')
+df_test = pd.read_csv('test_corrected.csv')
+
+# For reading in the corrected train and test files
+# df_train = pd.read_csv('train_corrected.csv', encoding = "ISO-8859-1")
+# df_test = pd.read_csv('test_corrected.csv', encoding = "ISO-8859-1")
 
 ################################################################################
 ############################## 2. DEFINE FUNCTIONS #############################
@@ -500,6 +503,8 @@ x_test['q1_c1'] = temp_test_vector['q1_c1']
 x_test['q1_c2'] = temp_test_vector['q1_c2'] 
 x_test['q2_c1'] = temp_test_vector['q2_c1'] 
 x_test['q2_c2'] = temp_test_vector['q2_c2']
+
+del temp_train_vector, temp_test_vector
 
 
 
