@@ -132,13 +132,13 @@ def process_questions(question_list, questions, question_list_name, dataframe):
             
 # Execution            
 train_question1 = []
-process_questions(train_question1, df_train.question1, 'train_question1', train)
+process_questions(train_question1, df_train.question1, 'train_question1', df_train)
 
 train_question2 = []
-process_questions(train_question2, df_train.question2, 'train_question2', train)
+process_questions(train_question2, df_train.question2, 'train_question2', df_train)
 
 test_question1 = []
-process_questions(test_question1, df_test.question1, 'test_question1', test)
+process_questions(test_question1, df_test.question1, 'test_question1', df_test)
 
 test_question2 = []
-process_questions(test_question2, df_test.question2, 'test_question2', test)
+process_questions(test_question2, df_test.question2, 'test_question2', df_test)
