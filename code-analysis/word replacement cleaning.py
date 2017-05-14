@@ -172,5 +172,5 @@ df_test['question2'] = pd.Series(test_question2)
 
 # Write out the files
 
-df_train.to_csv('df_train_corrected.csv', index=False)
-df_test.to_csv('df_test_corrected.csv', index=False)
+df_train.to_csv('train_corrected.csv', index=False)
+df_test.to_csv('test_corrected.csv', index=False)
