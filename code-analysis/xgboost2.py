@@ -632,7 +632,7 @@ params['seed'] = random
 
 
 ################################################################################
-################################# 5.B Cross-validate ###########################
+################################# 5.B CROSS-VALIDATE ###########################
 ################################################################################
 
 # WARNING: 
@@ -666,7 +666,8 @@ bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_round
 # [999]   train-logloss:0.207013  valid-logloss:0.225871 (34 features + 4 magic features)
 # [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 features + 13 abhi features)
 
-#[999]   train-logloss:0.200331 (51 features + 4 LSA components features)
+# [999]   train-logloss:0.200331 (51 features + 4 LSA components features)
+# [999]   train-logloss:0.20257
 
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not    
@@ -674,7 +675,7 @@ bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_round
 
 
 ################################################################################
-################################# 5.C XGBoost ##################################
+################################# 5.C XGBOOST ##################################
 ################################################################################
 
 
