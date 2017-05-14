@@ -163,4 +163,14 @@ process_questions(test_question2, df_test.question2, 'test_question2', df_test)
 
 # Push back to the x_train and x_test files
 
-df_train['question1'] = pd.Series()
+df_train['question1'] = pd.Series(train_question1)
+df_train['question2'] = pd.Series(train_question2)
+
+df_test['question1'] = pd.Series(test_question1)
+df_test['question2'] = pd.Series(test_question2)
+
+
+# Write out the files
+
+df_train.to_csv('df_train_corrected.csv', index=False)
+df_test.to_csv('df_test_corrected.csv', index=False)
