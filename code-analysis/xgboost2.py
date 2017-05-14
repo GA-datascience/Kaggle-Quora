@@ -614,7 +614,7 @@ x_train_cv, x_valid, y_train_cv, y_valid = train_test_split(x_train, y_train, te
 # Go straight to 5a then 5c to run model for submission
 
 ################################################################################
-################################# 5.a PARAMETERS #############################
+################################# 5.A PARAMETERS #############################
 ################################################################################
 
 ### 5.1) Setting the model parameters  ###
@@ -627,7 +627,7 @@ params['seed'] = random
 
 
 ################################################################################
-################################# 5.b Cross validate ###########################
+################################# 5.B Cross-validate ###########################
 ################################################################################
 
 # WARNING: 
@@ -643,49 +643,48 @@ xg_valid = xgb.DMatrix(x_valid, label = y_valid) # valid (test) set input.
 
 watchlist_cv = [(xg_train_cv, 'train'), (xg_valid, 'valid')]
 ### 5.3) Runs the model  ###
-# start modelling and training on the train and valid df (split from x_train and y_train)
-# 
+# Model and train on the train and valid df (split from x_train and y_train)
+
+bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_rounds = 30)
+
 # [500] train-logloss: 0.339 valid-logloss:0.34481 (6 features)
 # [500] train-logloss:0.330407  valid-logloss:0.338668 (12 features)
 # [499] train-logloss:0.316258  valid-logloss:0.32599 (12 + 7 fuzzywuzzy features)
 # [499] train-logloss:0.309309  valid-logloss:0.322939 (eta increased to 0.15)
 # [499] train-logloss:0.302894  valid-logloss:0.318291 (24 features, added no space character counts)
 # [499] train-logloss:0.294968  valid-logloss:0.310598 (27 features)
-#  [499]   train-logloss:0.284764  valid-logloss:0.301273
+# [499]   train-logloss:0.284764  valid-logloss:0.301273
 # (LSA components. Very good results but disappointing score. is it overfitting?)
 
 # [499]   train-logloss:0.279368  valid-logloss:0.29681
 # (more LSA features 38 features total)
 # [999]   train-logloss:0.207013  valid-logloss:0.225871 (34 features + 4 magic features)
-# [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 + 13 abhi features)
+# [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 features + 13 abhi features)
 
+#[999]   train-logloss:0.200331 (51 features + 4 LSA components features)
 
-#[999]   train-logloss:0.200331
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not    
 
 
-bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_rounds = 30)
-
-
 
 ################################################################################
-################################# 5.b Xgboost ##################################
+################################# 5.C XGBoost ##################################
 ################################################################################
 
 
-# lets train the entire train set 
+# Train the entire train set 
 
 xg_train = xgb.DMatrix(x_train, label = y_train) # train set input into xgb
  
 watchlist = [(xg_train, 'train')]
 
-# train on entire train set 
+# Train on entire train set 
 bst = xgb.train(params, xg_train, 1000, watchlist)
 
 
 ### 5.4) Test the model  ###
-# time to input our test dataset into our model 
+# Input test dataset into our model 
 xg_test = xgb.DMatrix(x_test)
 output_result = bst.predict(xg_test)
 
