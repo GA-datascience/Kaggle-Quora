@@ -1,3 +1,16 @@
+import pandas as pd
+import numpy as np
+import nltk
+import re
+from string import punctuation
+
+
+
+df_train = pd.read_csv('train.csv')
+df_test = pd.read_csv('test.csv')
+
+
+
 def text_to_wordlist(text):
     
     # Replace weird chars in text
@@ -101,7 +114,31 @@ def text_to_wordlist(text):
     text = re.sub('[\s]+', " ", text)
     text = text.strip()
 
-
     
     # Return a list of words
     return(text)
+
+
+# Function for concatenating all the required processes into one
+def process_questions(question_list, questions, question_list_name, dataframe):
+    '''transform questions and display progress'''
+    for question in questions:
+        question_list.append(text_to_wordlist(question))
+        if len(question_list) % 100000 == 0:
+            progress = len(question_list)/len(dataframe) * 100
+            print("{} is {}% complete.".format(question_list_name, round(progress, 1)))
+            
+            
+            
+# Execution            
+train_question1 = []
+process_questions(train_question1, df_train.question1, 'train_question1', train)
+
+train_question2 = []
+process_questions(train_question2, df_train.question2, 'train_question2', train)
+
+test_question1 = []
+process_questions(test_question1, df_test.question1, 'test_question1', test)
+
+test_question2 = []
+process_questions(test_question2, df_test.question2, 'test_question2', test)
