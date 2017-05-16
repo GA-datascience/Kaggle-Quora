@@ -23,8 +23,8 @@ np.random.seed(random)
 #### 1.2) Read the data ###
 
 
-df_train = pd.read_csv('train_corrected.csv')
-df_test = pd.read_csv('test_corrected.csv')
+df_train = pd.read_csv('train_corrected.csv', encoding = "ISO-8859-1")
+df_test = pd.read_csv('test_corrected.csv', encoding = "ISO-8859-1")
 
 # For reading in the corrected train and test files
 # df_train = pd.read_csv('train_corrected.csv', encoding = "ISO-8859-1")
@@ -667,7 +667,7 @@ bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_round
 # [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 features + 13 abhi features)
 
 # [999]   train-logloss:0.200331 (51 features + 4 LSA components features)
-# [999]   train-logloss:0.20257
+# [999]   train-logloss:0.20257 (cleaned dataset)
 
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not    
@@ -700,7 +700,7 @@ outputsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_res
 
 outputsub.to_csv('rename_sub.csv',index = False)
 
-
+outputsub.to_csv('55features_add5simhash.csv',index = False)
 ################################################################################
 ################################ 6. FEATURES CHART #############################
 ################################################################################
@@ -717,3 +717,7 @@ score_df.plot(kind= 'barh', x='variables',y='f_score', legend = False)
 plt.rcParams['figure.figsize'] = (9.0, 9.0)
 xgb.plot_importance(bst); plt.show()
  
+
+for feature in features:
+    del x_train[feature]
+    del x_test[feature]
