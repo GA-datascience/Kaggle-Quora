@@ -22,13 +22,10 @@ np.random.seed(random)
 
 #### 1.2) Read the data ###
 
-
-df_train = pd.read_csv('train_corrected.csv', encoding = "ISO-8859-1")
-df_test = pd.read_csv('test_corrected.csv', encoding = "ISO-8859-1")
-
-# For reading in the corrected train and test files
-# df_train = pd.read_csv('train_corrected.csv', encoding = "ISO-8859-1")
-# df_test = pd.read_csv('test_corrected.csv', encoding = "ISO-8859-1")
+# For reading in the spell corrected df_train file
+# df_train = pd.read_csv('df_train_corrected.csv', encoding = "ISO-8859-1")
+df_train = pd.read_csv('train.csv', encoding = "ISO-8859-1")
+df_test = pd.read_csv('test.csv',encoding = "ISO-8859-1")
 
 ################################################################################
 ############################## 2. DEFINE FUNCTIONS #############################
@@ -55,7 +52,7 @@ def shared_words(row):
             q2words[word] = 1
     
     if len(q1words) == 0 or len(q2words) == 0 :
-        return '0:0:0:0:0'
+        return '0:0:0:0:0:0:0'
     
     # Common non stop words between question pairs. Both variables are equivalent 
     shared_words_q1 = [word for word in q1words.keys() if word in q2words.keys()]
@@ -69,7 +66,21 @@ def shared_words(row):
     R3 = R1-R2
     R4 = len(shared_words_q1)
     
-    return '{}:{}:{}:{}:{}'.format(R,R1,R2,R3,R4)
+    hammer = sum(1 for i in zip(q1, q2) if i[0]==i[1])/max(len(q1), len(q2))
+    
+    #shared 2 gram 
+    q1_2gram = set([i for i in zip(q1, q1[1:])])
+    q2_2gram = set([i for i in zip(q2, q2[1:])])
+    shared_2gram = q1_2gram.intersection(q2_2gram)
+    
+    
+    if len(q1_2gram) + len(q2_2gram) == 0:
+        R2gram = 0
+    else:
+        R2gram = len(shared_2gram) / (len(q1_2gram) + len(q2_2gram))
+    
+    
+    return '{}:{}:{}:{}:{}:{}:{}'.format(R,R1,R2,R3,R4,hammer,R2gram)
     
 
 ### 2.2) Set 2: TDIDF (4 features)  ###
@@ -227,20 +238,6 @@ def manhattan_dist(row):
     # 7.3 = Freq of Hash1
     # 7.4 = Freq of Hash2
     
-    # Set 8 (Additional Abhishek's features concerning word2vec, 13 features)
-    # 8.1 = Word mover distance
-    # 8.2 = Normalized word mover distance
-    # 8.3 = Cosine distance btwn vectors of q1 and q2
-    # 8.4 = Manhattan distance btwn vectors of q1 and q2
-    # 8.5 = Jaccard distance btwn vectors of q1 and q2
-    # 8.6 = Canberra distance btwn vectors of q1 and q2
-    # 8.7 = Euclidean distance btwn vectors of q1 and q2
-    # 8.8 = Minkowski distance btwn vectors of q1 and q2
-    # 8.9 = Braycurtis distance btwn vectors of q1 and q2
-    # 8.10 = Skew of q1 vector
-    # 8.11 = Skew of q2 vector
-    # 8.12 = Kurtosis of q1 vector
-    # 8.13 = Kurtosis of q2 vector
     
     
     
@@ -265,7 +262,8 @@ x_train['q1_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[1]))
 x_train['q2_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[2]))
 x_train['ratio_diff'] = temp_df['allR'].apply(lambda x: float(x.split(':')[3]))
 x_train['shared_words_length'] = temp_df['allR'].apply(lambda x: float(x.split(':')[4]))
-
+x_train['hammering'] = temp_df['allR'].apply(lambda x: float(x.split(':')[5]))
+x_train['shared_2gram'] = temp_df['allR'].apply(lambda x: float(x.split(':')[6]))
 
 # Set 2
 x_train['tfidf'] = temp_df['tfidf_all'].apply(lambda x: float(x.split(':')[0]))
@@ -322,6 +320,8 @@ x_test['q1_ns_ratio'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[
 x_test['q2_ns_ratio'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[2]))
 x_test['ratio_diff'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[3]))
 x_test['shared_words_length'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[4]))
+x_test['hammering'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[5]))
+x_test['shared_2gram'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[6]))
 
 # Set 2
 x_test['tfidf'] = temp_df_test['tfidf_all'].apply(lambda x: float(x.split(':')[0]))
@@ -504,8 +504,6 @@ x_test['q1_c2'] = temp_test_vector['q1_c2']
 x_test['q2_c1'] = temp_test_vector['q2_c1'] 
 x_test['q2_c2'] = temp_test_vector['q2_c2']
 
-del temp_train_vector, temp_test_vector
-
 
 
 ################################################################################
@@ -616,10 +614,10 @@ x_train_cv, x_valid, y_train_cv, y_valid = train_test_split(x_train, y_train, te
 ################################# 5. XGBOOST ###################################
 ################################################################################
 
-# Go straight to 5a then 5c to run model for submission
+# Go straight to 5a then 5c to run model for submittion
 
 ################################################################################
-################################# 5.A PARAMETERS #############################
+################################# 5.a PARAMETERS #############################
 ################################################################################
 
 ### 5.1) Setting the model parameters  ###
@@ -632,7 +630,7 @@ params['seed'] = random
 
 
 ################################################################################
-################################# 5.B CROSS-VALIDATE ###########################
+################################# 5.b Cross validate ###########################
 ################################################################################
 
 # WARNING: 
@@ -648,49 +646,51 @@ xg_valid = xgb.DMatrix(x_valid, label = y_valid) # valid (test) set input.
 
 watchlist_cv = [(xg_train_cv, 'train'), (xg_valid, 'valid')]
 ### 5.3) Runs the model  ###
-# Model and train on the train and valid df (split from x_train and y_train)
-
-bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_rounds = 30)
-
+# start modelling and training on the train and valid df (split from x_train and y_train)
+# 
 # [500] train-logloss: 0.339 valid-logloss:0.34481 (6 features)
 # [500] train-logloss:0.330407  valid-logloss:0.338668 (12 features)
 # [499] train-logloss:0.316258  valid-logloss:0.32599 (12 + 7 fuzzywuzzy features)
 # [499] train-logloss:0.309309  valid-logloss:0.322939 (eta increased to 0.15)
 # [499] train-logloss:0.302894  valid-logloss:0.318291 (24 features, added no space character counts)
 # [499] train-logloss:0.294968  valid-logloss:0.310598 (27 features)
-# [499]   train-logloss:0.284764  valid-logloss:0.301273
+#  [499]   train-logloss:0.284764  valid-logloss:0.301273
 # (LSA components. Very good results but disappointing score. is it overfitting?)
 
 # [499]   train-logloss:0.279368  valid-logloss:0.29681
 # (more LSA features 38 features total)
 # [999]   train-logloss:0.207013  valid-logloss:0.225871 (34 features + 4 magic features)
-# [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 features + 13 abhi features)
+# [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 + 13 abhi features)
 
-# [999]   train-logloss:0.200331 (51 features + 4 LSA components features)
-# [999]   train-logloss:0.20257 (cleaned dataset)
 
+#[999]   train-logloss:0.200331
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not    
 
 
+# [999]   train-logloss:0.199891 (57 features)
+
+bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_rounds = 30)
+
+
 
 ################################################################################
-################################# 5.C XGBOOST ##################################
+################################# 5.b Xgboost ##################################
 ################################################################################
 
 
-# Train the entire train set 
+# lets train the entire train set 
 
 xg_train = xgb.DMatrix(x_train, label = y_train) # train set input into xgb
  
 watchlist = [(xg_train, 'train')]
 
-# Train on entire train set 
+# train on entire train set 
 bst = xgb.train(params, xg_train, 1000, watchlist)
 
 
 ### 5.4) Test the model  ###
-# Input test dataset into our model 
+# time to input our test dataset into our model 
 xg_test = xgb.DMatrix(x_test)
 output_result = bst.predict(xg_test)
 
@@ -700,7 +700,7 @@ outputsub = pd.DataFrame({'test_id':df_test['test_id'],'is_duplicate':output_res
 
 outputsub.to_csv('rename_sub.csv',index = False)
 
-outputsub.to_csv('55features_add5simhash.csv',index = False)
+
 ################################################################################
 ################################ 6. FEATURES CHART #############################
 ################################################################################
@@ -717,7 +717,3 @@ score_df.plot(kind= 'barh', x='variables',y='f_score', legend = False)
 plt.rcParams['figure.figsize'] = (9.0, 9.0)
 xgb.plot_importance(bst); plt.show()
  
-
-for feature in features:
-    del x_train[feature]
-    del x_test[feature]
