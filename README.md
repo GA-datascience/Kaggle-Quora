@@ -15,7 +15,20 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 # Update Logs
 <br>
 
-* **Version 1.6 - 13th May 2017:**
+* **Version 1.9 - 18th May 2017:**
+
+  + Added Hammering distance and Shared 2 gram features. 
+  + Total features: 57
+  + Improved score by 0.002
+  + Score - 0.263XX
+
+* **Version 1.8 - 16th May 2017:**
+
+  + The original data set for train and test csv files are 'cleaned' up with 'word replacement cleaning.py' script. Rerun all of the generated features, except for Abhishek's features.
+  + Improved score slightly by 0.005
+  + score - 0.265XX
+
+* **Version 1.7 - 13th May 2017:**
   
   + Revamp LSA features, based on train and test data as 'document' as opposed to referencing them seperately. 
   + 6 new features: LSA Q1 component 1, 2 , Q2 component 1, 2 and 2 distancing based on the components 
@@ -26,7 +39,7 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 * **Version 1.6 - 12th May 2017:**
 
   + Added 4 magic features - 0.30XX 
-  + Added AB 12 features - 0.28XX 
+  + Added AB 13 features - 0.28XX 
   + Total 51 features 
   
 * **Version 1.5 - 20th April 2017:**

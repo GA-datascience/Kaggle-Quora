@@ -23,9 +23,8 @@ np.random.seed(random)
 #### 1.2) Read the data ###
 
 # For reading in the spell corrected df_train file
-# df_train = pd.read_csv('df_train_corrected.csv', encoding = "ISO-8859-1")
-df_train = pd.read_csv('train.csv', encoding = "ISO-8859-1")
-df_test = pd.read_csv('test.csv',encoding = "ISO-8859-1")
+df_train = pd.read_csv('train_corrected.csv', encoding = "ISO-8859-1")
+df_test = pd.read_csv('test_corrected.csv',encoding = "ISO-8859-1")
 
 ################################################################################
 ############################## 2. DEFINE FUNCTIONS #############################
@@ -176,13 +175,15 @@ def manhattan_dist(row):
 ################################################################################
 
 
-# Currently 38 features
-    # Set 1 (5 features)
+# Currently 57 features
+    # Set 1 (7 features)
     # 1.1 = Proportion of shared words
     # 1.2 = Ratio of q1's non stopwords
     # 1.3 = Ratio of q2's non stopwords
     # 1.4 = Ratio difference (1.3 - 1.4)
     # 1.5 = Length (number) of shared non stop words
+    # 1.6 = Hammering distance
+    # 1.7 = Shared 2 gram
 
     
     #Set 2 (4 features)
@@ -238,6 +239,21 @@ def manhattan_dist(row):
     # 7.3 = Freq of Hash1
     # 7.4 = Freq of Hash2
     
+    # Set 8 (Abhishek's 13 features)
+    #
+    # 8.1 = Word mover distance
+    # 8.2 = Normalized word mover distance
+    # 8.3 = Cosine distance btwn vectors of q1 and q2
+    # 8.4 = Manhattan distance btwn vectors of q1 and q2
+    # 8.5 = Jaccard distance btwn vectors of q1 and q2
+    # 8.6 = Canberra distance btwn vectors of q1 and q2
+    # 8.7 = Euclidean distance btwn vectors of q1 and q2
+    # 8.8 = Minkowski distance btwn vectors of q1 and q2
+    # 8.9 = Braycurtis distance btwn vectors of q1 and q2
+    # 8.10 = Skew of q1 vector
+    # 8.11 = Skew of q2 vector
+    # 8.12 = Kurtosis of q1 vector
+    # 8.13 = Kurtosis of q2 vector
     
     
     
