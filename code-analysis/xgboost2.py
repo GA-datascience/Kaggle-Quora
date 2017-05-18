@@ -597,7 +597,6 @@ x_test[features] = test_comb[features]
 del train_questions, train_cp, test_cp, comb, train_comb, test_comb, q1_vc, q2_vc, features
 
 
-
 ################################################################################
 ################################ 4. TRAINING SAMPLES ###########################
 ################################################################################
@@ -633,7 +632,7 @@ x_train_cv, x_valid, y_train_cv, y_valid = train_test_split(x_train, y_train, te
 # Go straight to 5a then 5c to run model for submittion
 
 ################################################################################
-################################# 5.a PARAMETERS #############################
+################################# 5.A PARAMETERS #############################
 ################################################################################
 
 ### 5.1) Setting the model parameters  ###
@@ -646,7 +645,7 @@ params['seed'] = random
 
 
 ################################################################################
-################################# 5.b Cross validate ###########################
+################################# 5.B CROSS-VALIDATE ###########################
 ################################################################################
 
 # WARNING: 
@@ -677,21 +676,18 @@ watchlist_cv = [(xg_train_cv, 'train'), (xg_valid, 'valid')]
 # (more LSA features 38 features total)
 # [999]   train-logloss:0.207013  valid-logloss:0.225871 (34 features + 4 magic features)
 # [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 + 13 abhi features)
+# [999]   train-logloss:0.200331 (corrected dataset)
+# [999]   train-logloss:0.199891 (55 features + 2 features - hammering dist and shared_2gram = 57 features)
 
 
-#[999]   train-logloss:0.200331
 # stop iteration if no improvement for 30 rounds 
-# where train set improves but test set does not    
-
-
-# [999]   train-logloss:0.199891 (57 features)
-
+# where train set improves but test set does not   
 bst_cv = xgb.train(params, xg_train_cv, 1000, watchlist_cv, early_stopping_rounds = 30)
 
 
 
 ################################################################################
-################################# 5.b Xgboost ##################################
+################################# 5.C XGBOOST ##################################
 ################################################################################
 
 
