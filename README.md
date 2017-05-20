@@ -123,21 +123,13 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
     
 * Ensemble methods: 
     + https://mlwave.com/kaggle-ensembling-guide/
----
 
-# To do/ comments
-
-1. **Running the spell checker script on train set and testing set (~20k per hour)**
-
-So, train set will take about 404/20 = ~20 hours.  
-Then, test set will take 20hours * 6 = 120 hours == 5 days +
-
-Spell checker script taken from: http://norvig.com/spell-correct.html
-
-Download big.txt file because the script needs to reference to that corpus of words.
-I only added the sentence_correction function which is to be run on both data sets.
-
-
-**Conclusion: Fuzzy wuzzy features are really significant. But realise that after implementing the Jaccard and Cosine dist features, the rankings changed. Refer to the features importance in the figures folder**
+* GPU, Deep Learning and Keras/Theanos/TF related Articles:
+    + http://timdettmers.com/2017/04/09/which-gpu-for-deep-learning/
+    + https://developer.nvidia.com/deep-learning-getting-started
+    
+* Keras, Theanos and TensorFlow related articles:
+    + http://www.pyimagesearch.com/2016/11/14/installing-keras-with-tensorflow-backend/
+    + https://keras.io/
 
 ---
