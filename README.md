@@ -21,7 +21,7 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
   + Dropped 2 magic hash features (-2)
   + Added 4 location features and 1 new magic feature part 2 (+5)
   + Total features: 60
-  + Improved score by *0.1 :o*
+  + Improved score by **0.1 :o**
   + Score - 0.16010
 
 * **Version 1.9 - 18th May 2017:**
@@ -144,13 +144,13 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 ---
 # To do list
 
-    + Test out location features (its inclusion as a whole, and converting has/has not features into binary features so that XGBoost can account for it)
-    + Make a new feature of q1_freq - q2_freq to see if model improves by taking into account the difference in frequency
-    + Re-run Abhishek's features with word2vec and gensim
-    + Add 3rd LSA component to test out its effectiveness
-    + Add extra distances features using the research paper and jellyfish library
-    + Explore LDA
-    + Explore WordNet
-    + Explore the image features
-    + Consider using lemmatizing or stemming of words
-    + *Lastly... Look out for magic features :S*
+    * Test out location features (its inclusion as a whole, and converting has/has not features into binary features so that XGBoost can account for it)
+    * Make a new feature of q1_freq - q2_freq to see if model improves by taking into account the difference in frequency
+    * Re-run Abhishek's features with word2vec and gensim
+    * Add 3rd LSA component to test out its effectiveness
+    * Add extra distances features using the research paper and jellyfish library
+    * Explore LDA
+    * Explore WordNet
+    * Explore the image features
+    * Consider using lemmatizing or stemming of words
+    * **Lastly... Look out for magic features :S**
