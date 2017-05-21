@@ -90,7 +90,7 @@ def get_weight(count, eps=10000, min_count=2):
     else:
         return 1 / (count + eps)
 
-train_qs = pd.Series(df_train['question1'].tolist() + df_train['question2'].tolist()).astype(str)
+train_qs = pd.Series(df_train['question1'].tolist() + df_train['question2'].tolist() + df_test['question1'].tolist() + df_test['question2'].tolist()).astype(str)
 words = (" ".join(train_qs)).lower().split() 
 counts = Counter(words)
 weights = {word: get_weight(count) for word, count in counts.items()} 
