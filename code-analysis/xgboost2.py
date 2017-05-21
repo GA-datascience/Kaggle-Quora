@@ -615,8 +615,8 @@ train_copy = df_train.copy()
 test_copy = df_test.copy()
 
 # Concatenates (like rbind) both train and test datasets for q1 and q2 columns only
-ques = pd.concat([train_orig[['question1', 'question2']], \
-        test_orig[['question1', 'question2']]], axis=0).reset_index(drop='index')
+ques = pd.concat([train_copy[['question1', 'question2']], \
+        test_copy[['question1', 'question2']]], axis=0).reset_index(drop='index')
 
 # Creates the dictionary
 q_dict = defaultdict(set)
