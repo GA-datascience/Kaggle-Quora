@@ -144,16 +144,17 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 ---
 
 # To do list
+<br>
 
-    * Test out location features (its inclusion as a whole, and converting has/has not features into binary features so that XGBoost can account for it)
-    * Make a new feature of q1_freq - q2_freq to see if model improves by taking into account the difference in frequency
-    * Re-run Abhishek's features with word2vec and gensim
-    * Add 3rd LSA component to test out its effectiveness
-    * Add extra distances features using the research paper and jellyfish library
-    * Explore LDA
-    * Explore WordNet
-    * Explore the image features
-    * Consider using lemmatizing or stemming of words
-    * **Lastly... Look out for magic features :S**
+* Test out location features (its inclusion as a whole, and converting has/has not features into binary features so that XGBoost can account for it)
+* Make a new feature of q1_freq - q2_freq to see if model improves by taking into account the difference in frequency
+* Re-run Abhishek's features with word2vec and gensim
+* Add 3rd LSA component to test out its effectiveness
+* Add extra distances features using the research paper and jellyfish library
+* Explore LDA
+* Explore WordNet
+* Explore the image features
+* Consider using lemmatizing or stemming of words
+* **Lastly... Look out for magic features :S**
     
 ---
