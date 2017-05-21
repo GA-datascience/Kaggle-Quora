@@ -175,7 +175,7 @@ def manhattan_dist(row):
 ################################################################################
 
 
-# Currently 57 features
+# Currently 60 features
     # Set 1 (7 features)
     # 1.1 = Proportion of shared words
     # 1.2 = Ratio of q1's non stopwords
@@ -232,12 +232,13 @@ def manhattan_dist(row):
     # 6.4 = Q2 compinent 1 and 2 (2 features)
     
     
-    # Set 7 (4 'Magic' features) 
+    # Set 7 (3 'Magic' features) 
     #
-    # 7.1 = Hash1 
-    # 7.2 = Hash2
+    # 7.1 = Hash1 (Dropped) 
+    # 7.2 = Hash2 (Dropped)
     # 7.3 = Freq of Hash1
     # 7.4 = Freq of Hash2
+    # 7.5 = Intersection of q1 and q2
     
     # Set 8 (Abhishek's 13 features)
     #
@@ -254,6 +255,13 @@ def manhattan_dist(row):
     # 8.11 = Skew of q2 vector
     # 8.12 = Kurtosis of q1 vector
     # 8.13 = Kurtosis of q2 vector
+    
+    # Set 9 (Locations features)
+    #
+    # 9.1 = No. of countries detected in q1
+    # 9.2 = No. of countries detected in q2
+    # 9.3 = No. of common countries btwn q1 and q2
+    # 9.4 = No. of non-matched countries btwn q1 and q2
     
     
     
@@ -523,7 +531,7 @@ x_test['q2_c2'] = temp_test_vector['q2_c2']
 
 
 ################################################################################
-################################ Magic Features ################################
+############################### Magic Features 1 ###############################
 ################################################################################
 
 # Create duplicates of the df_train and df_test sets
@@ -595,6 +603,37 @@ x_test[features] = test_comb[features]
 
 # Delete the generated variables in 'Magic Features' script
 del train_questions, train_cp, test_cp, comb, train_comb, test_comb, q1_vc, q2_vc, features
+
+################################################################################
+############################### Magic Features 2 ###############################
+################################################################################
+
+from collections import defaultdict
+
+# Create copies of original df_train and df_test
+train_copy = df_train.copy()
+test_copy = df_test.copy()
+
+# Concatenates (like rbind) both train and test datasets for q1 and q2 columns only
+ques = pd.concat([train_orig[['question1', 'question2']], \
+        test_orig[['question1', 'question2']]], axis=0).reset_index(drop='index')
+
+# Creates the dictionary
+q_dict = defaultdict(set)
+for i in range(ques.shape[0]):
+        q_dict[ques.question1[i]].add(ques.question2[i])
+        q_dict[ques.question2[i]].add(ques.question1[i])
+        
+# Defines the function for returning number of frequency
+def q1_q2_intersect(row):
+    return(len(set(q_dict[row['question1']]).intersection(set(q_dict[row['question2']]))))
+
+# Generates the feature
+x_train['q1_q2_intersect'] = train_copy.apply(q1_q2_intersect, axis=1, raw=True)
+x_test['q1_q2_intersect'] = test_copy.apply(q1_q2_intersect, axis=1, raw=True)
+
+# Delete the generated variables
+del q_dict, ques, train_copy, test_copy
 
 
 ################################################################################
@@ -679,7 +718,7 @@ watchlist_cv = [(xg_train_cv, 'train'), (xg_valid, 'valid')]
 # [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 + 13 abhi features)
 # [999]   train-logloss:0.200331 (corrected dataset)
 # [999]   train-logloss:0.199891 (55 features + 2 features - hammering dist and shared_2gram = 57 features)
-# [999]   train-logloss:0.201872 (replaced old TFIDF features - 2 hash features + 4 new location features = 59 features)
+# [999]   train-logloss:0.155211 (57 - 2 hash features + 4 locations + 1 magic feature p2 = 60 features)
 
 
 # stop iteration if no improvement for 30 rounds 
