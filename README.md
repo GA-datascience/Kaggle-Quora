@@ -142,6 +142,7 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
     + https://keras.io/
 
 ---
+
 # To do list
 
     * Test out location features (its inclusion as a whole, and converting has/has not features into binary features so that XGBoost can account for it)
@@ -154,3 +155,5 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
     * Explore the image features
     * Consider using lemmatizing or stemming of words
     * **Lastly... Look out for magic features :S**
+    
+---
