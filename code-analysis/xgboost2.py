@@ -679,6 +679,7 @@ watchlist_cv = [(xg_train_cv, 'train'), (xg_valid, 'valid')]
 # [999]   train-logloss:0.199112  valid-logloss:0.220251 (38 + 13 abhi features)
 # [999]   train-logloss:0.200331 (corrected dataset)
 # [999]   train-logloss:0.199891 (55 features + 2 features - hammering dist and shared_2gram = 57 features)
+# [999]   train-logloss:0.201872 (replaced old TFIDF features - 2 hash features + 4 new location features = 59 features)
 
 
 # stop iteration if no improvement for 30 rounds 

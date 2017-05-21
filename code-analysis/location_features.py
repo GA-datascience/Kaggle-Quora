@@ -1,6 +1,6 @@
 import re
 
-locations = pd.read_csv("../Movehub/cities.csv")
+locations = pd.read_csv("Movehub/cities.csv")
 
 
 # Selects only the country column, drops any NA values and convert to a set 
@@ -36,16 +36,16 @@ for index, row in tqdm(df_train[0:subset].iterrows()):
         q2_matches = [i.lower() for i in re.findall(regex, q2, flags=re.IGNORECASE)]
 
     rr['z_q1_place_num'] = len(q1_matches)
-    rr['z_q1_has_place'] =len(q1_matches) > 0
+    # rr['z_q1_has_place'] =len(q1_matches) > 0
 
     rr['z_q2_place_num'] = len(q2_matches) 
-    rr['z_q2_has_place'] = len(q2_matches) > 0
+    # rr['z_q2_has_place'] = len(q2_matches) > 0
 
     rr['z_place_match_num'] = len(set(q1_matches).intersection(set(q2_matches)))
-    rr['z_place_match'] = rr['z_place_match_num'] > 0
+    # rr['z_place_match'] = rr['z_place_match_num'] > 0
 
     rr['z_place_mismatch_num'] = len(set(q1_matches).difference(set(q2_matches)))
-    rr['z_place_mismatch'] = rr['z_place_mismatch_num'] > 0
+    # rr['z_place_mismatch'] = rr['z_place_mismatch_num'] > 0
 
     results.append(rr)     
     
@@ -73,16 +73,16 @@ for index, row in tqdm(df_test[0:subset].iterrows()):
         q2_matches = [i.lower() for i in re.findall(regex, q2, flags=re.IGNORECASE)]
 
     rr['z_q1_place_num'] = len(q1_matches)
-    rr['z_q1_has_place'] =len(q1_matches) > 0
+    # rr['z_q1_has_place'] =len(q1_matches) > 0
 
     rr['z_q2_place_num'] = len(q2_matches) 
-    rr['z_q2_has_place'] = len(q2_matches) > 0
+    # rr['z_q2_has_place'] = len(q2_matches) > 0
 
     rr['z_place_match_num'] = len(set(q1_matches).intersection(set(q2_matches)))
-    rr['z_place_match'] = rr['z_place_match_num'] > 0
+    # rr['z_place_match'] = rr['z_place_match_num'] > 0
 
     rr['z_place_mismatch_num'] = len(set(q1_matches).difference(set(q2_matches)))
-    rr['z_place_mismatch'] = rr['z_place_mismatch_num'] > 0
+    # rr['z_place_mismatch'] = rr['z_place_mismatch_num'] > 0
 
     results.append(rr)     
 
@@ -94,10 +94,14 @@ train_locations.to_csv('train_locations.csv', index=False)
 test_locations.to_csv('test_locations.csv', index=False)
 
 # Concatenate into the x_train and x_test csv
+#==============================================================================
+# 
+# # features = ['z_q1_place_num', 'z_q1_has_place', 'z_q2_place_num', 'z_q2_has_place',
+#             'z_place_match_num', 'z_place_match', 
+#             'z_place_mismatch_num', 'z_place_mismatch']
+#==============================================================================
 
-features = ['z_q1_place_num', 'z_q1_has_place', 'z_q2_place_num', 'z_q2_has_place',
-            'z_place_match_num', 'z_place_match', 
-            'z_place_mismatch_num', 'z_place_mismatch']
+features = ['z_q1_place_num', 'z_q2_place_num', 'z_place_match_num', 'z_place_mismatch_num']
 
 x_train[features] = train_locations[features]
 x_test[features] = test_locations[features]
