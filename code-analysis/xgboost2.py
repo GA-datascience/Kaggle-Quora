@@ -236,6 +236,15 @@ def jelly_features(row):
     # 5.3 = Euclidean distance 
     # 5.4 = Manhattan distance 
     
+    # Set Jelly (4 features) 
+    # Distance features  
+    #
+    # 1 = LD = Levenshtein Distance
+    # 2 = DLD = Damerau-Levenshtein Distance
+    # 3 = JD = Jaro Distance
+    # 4 = JW = Jaro-Winkler Distance
+    
+    
     # Set 6 (6 LSA features) - because of the complexity, i will separate set 6 
     # Distance features based on LSA-TFIDF components 
     #
@@ -341,7 +350,7 @@ x_train['euclidean_dist'] = df_train.apply(euclidean_dist, axis = 1)
 x_train['manhattan_dist'] = df_train.apply(manhattan_dist, axis = 1)
 
 
-# set 6 
+# set jelly
 
 x_train['LD'] = temp_df['jelly'].apply(lambda x: float(x.split(':')[0]))
 x_train['DLD'] = temp_df['jelly'].apply(lambda x: float(x.split(':')[1]))
@@ -412,7 +421,7 @@ x_test['cosine_dist'] = df_test.apply(cosine_dist, axis = 1)
 x_test['euclidean_dist'] = df_test.apply(euclidean_dist, axis = 1)
 x_test['manhattan_dist'] = df_test.apply(manhattan_dist, axis = 1)
 
-# set 6 
+# set jelly 
 x_test['LD'] = temp_df_test['jelly'].apply(lambda x: float(x.split(':')[0]))
 x_test['DLD'] = temp_df_test['jelly'].apply(lambda x: float(x.split(':')[1]))
 x_test['JD'] = temp_df_test['jelly'].apply(lambda x: float(x.split(':')[2]))
