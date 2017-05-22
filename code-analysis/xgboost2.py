@@ -167,6 +167,19 @@ def manhattan_dist(row):
 
 
 
+import jellyfish
+
+def jelly_features(row):
+    q1 = str(row['question1'])
+    q2= str(row['question2'])
+    
+    LD = jellyfish.levenshtein_distance(q1,q2)
+    DLD = jellyfish.damerau_levenshtein_distance(q1,q2)
+    JD = jellyfish.jaro_distance(q1,q2)
+    JW = jellyfish.jaro_winkler(q1,q2)
+    
+    return '{}:{}:{}:{}'.format(LD,DLD,JD,JW)
+
 
 
     
@@ -279,7 +292,7 @@ temp_df_test = pd.DataFrame()
 # create temp df for set 1 function  
 temp_df['allR'] = df_train.apply(shared_words, axis = 1, raw = True)
 temp_df['tfidf_all'] = df_train.apply(tfidf_word_match_share, axis = 1, raw = True)
-
+temp_df['jelly'] = df_train.apply(jelly_features, axis = 1, raw = True)
 # Set 1
 x_train['shared_words'] = temp_df['allR'].apply(lambda x: float(x.split(':')[0]))
 x_train['q1_ns_ratio'] = temp_df['allR'].apply(lambda x: float(x.split(':')[1]))
@@ -327,6 +340,16 @@ x_train['cosine_dist'] = df_train.apply(cosine_dist, axis = 1)
 x_train['euclidean_dist'] = df_train.apply(euclidean_dist, axis = 1)
 x_train['manhattan_dist'] = df_train.apply(manhattan_dist, axis = 1)
 
+
+# set 6 
+
+x_train['LD'] = temp_df['jelly'].apply(lambda x: float(x.split(':')[0]))
+x_train['DLD'] = temp_df['jelly'].apply(lambda x: float(x.split(':')[1]))
+x_train['JD'] = temp_df['jelly'].apply(lambda x: float(x.split(':')[2]))
+x_train['JW'] = temp_df['jelly'].apply(lambda x: float(x.split(':')[3]))
+
+
+
 del temp_df
 
 ################################################################################
@@ -337,6 +360,8 @@ del temp_df
 # create temp df for set 1 function
 temp_df_test['allR'] = df_test.apply(shared_words, axis = 1, raw = True)
 temp_df_test['tfidf_all'] = df_test.apply(tfidf_word_match_share, axis = 1, raw = True)
+temp_df_test['jelly'] = df_test.apply(jelly_features, axis = 1, raw = True)
+
 
 # Set 1 
 x_test['shared_words'] = temp_df_test['allR'].apply(lambda x: float(x.split(':')[0]))
@@ -387,6 +412,11 @@ x_test['cosine_dist'] = df_test.apply(cosine_dist, axis = 1)
 x_test['euclidean_dist'] = df_test.apply(euclidean_dist, axis = 1)
 x_test['manhattan_dist'] = df_test.apply(manhattan_dist, axis = 1)
 
+# set 6 
+x_test['LD'] = temp_df_test['jelly'].apply(lambda x: float(x.split(':')[0]))
+x_test['DLD'] = temp_df_test['jelly'].apply(lambda x: float(x.split(':')[1]))
+x_test['JD'] = temp_df_test['jelly'].apply(lambda x: float(x.split(':')[2]))
+x_test['JW'] = temp_df_test['jelly'].apply(lambda x: float(x.split(':')[3]))
 
 
 # remove temp 
@@ -719,7 +749,7 @@ watchlist_cv = [(xg_train_cv, 'train'), (xg_valid, 'valid')]
 # [999]   train-logloss:0.200331 (corrected dataset)
 # [999]   train-logloss:0.199891 (55 features + 2 features - hammering dist and shared_2gram = 57 features)
 # [999]   train-logloss:0.155211 (57 - 2 hash features + 4 locations + 1 magic feature p2 = 60 features)
-
+# [999]   train-logloss:0.154304 (4 new jelly = 64 features)
 
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not   
