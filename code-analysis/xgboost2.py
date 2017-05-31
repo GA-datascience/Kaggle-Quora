@@ -245,13 +245,13 @@ def jelly_features(row):
     # 4 = JW = Jaro-Winkler Distance
     
     
-    # Set 6 (6 LSA features) - because of the complexity, i will separate set 6 
+    # Set 6 (8 LSA features) - because of the complexity, i will separate set 6 
     # Distance features based on LSA-TFIDF components 
     #
     # 6.1 = Euclidean distance on LSA
     # 6.2 = Manhattan distance on LSA
-    # 6.3 = Q1 component 1 and 2 (2 features)
-    # 6.4 = Q2 compinent 1 and 2 (2 features)
+    # 6.3 = Q1 component 1 and 2 (3 features)
+    # 6.4 = Q2 compinent 1 and 2 (3 features)
     
     
     # Set 7 (6 'Magic' features) 
