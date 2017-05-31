@@ -809,6 +809,7 @@ watchlist_cv = [(xg_train_cv, 'train'), (xg_valid, 'valid')]
 # [999]   train-logloss:0.199891 (55 features + 2 features - hammering dist and shared_2gram = 57 features)
 # [999]   train-logloss:0.155211 (57 - 2 hash features + 4 locations + 1 magic feature p2 = 60 features)
 # [999]   train-logloss:0.154304 (4 new jelly = 64 features)
+# [999]   train-logloss:0.14756 (added q1_q2_intersect_wm and k-core)
 
 # stop iteration if no improvement for 30 rounds 
 # where train set improves but test set does not   
