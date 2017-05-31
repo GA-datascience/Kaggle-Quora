@@ -15,6 +15,16 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 # Update Logs
 <br>
 
+* **Version 2.1 - 31st May 2017:**
+
+  + Added 4 jelly features (distances)
+  + Added 2 LSA Component 3 features
+  + Added 1 weighted intersection feature (q1_q2_wm_ratio)
+  + Added 2 k-core decomposition features
+  + Total features: 69
+  + Improved score by ~0.8
+  + Score - 0.15244
+
 * **Version 2.0 - 21st May 2017:**
 
   + Replaced old TFIDF features 

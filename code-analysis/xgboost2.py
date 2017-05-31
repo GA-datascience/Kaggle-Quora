@@ -188,7 +188,7 @@ def jelly_features(row):
 ################################################################################
 
 
-# Currently 60 features
+# Currently 69 features
     # Set 1 (7 features)
     # 1.1 = Proportion of shared words
     # 1.2 = Ratio of q1's non stopwords
@@ -254,13 +254,16 @@ def jelly_features(row):
     # 6.4 = Q2 compinent 1 and 2 (2 features)
     
     
-    # Set 7 (3 'Magic' features) 
+    # Set 7 (6 'Magic' features) 
     #
     # 7.1 = Hash1 (Dropped) 
     # 7.2 = Hash2 (Dropped)
     # 7.3 = Freq of Hash1
     # 7.4 = Freq of Hash2
     # 7.5 = Intersection of q1 and q2
+    # 7.6 = Weighted intersection of q1 and q2
+    # 7.7 = K-Core Decomposition of qid1
+    # 7.8 = K-Core Decomposition of qid2
     
     # Set 8 (Abhishek's 13 features)
     #
