@@ -4,7 +4,29 @@ library(caret)
 source("logloss.R")
 library(doParallel)
 
+# load data
+trainset <- fread('x_train_r.csv')
+label <- fread('y_train_r.csv')
+testset <- fread('x_test.csv')
 
+trainset$is_duplicate <- label$is_duplicate
+trainset$is_duplicate <- ifelse(trainset$is_duplicate == 1, "Y", "N")
+trainset$is_duplicate <- as.factor(trainset$is_duplicate)
+
+
+# check for missing/ infinite / Nan 
+
+trainset[is.na(trainset)] <- 0 
+trainset$ab_wmd[which(is.infinite(trainset$ab_wmd))] <- 0
+trainset$ab_norm_wmd[which(is.infinite(trainset$ab_norm_wmd))] <- 0
+
+testset[is.na(testset)] <- 0 
+testset$ab_wmd[which(is.infinite(testset$ab_wmd))] <- 0
+testset$ab_norm_wmd[which(is.infinite(testset$ab_norm_wmd))] <- 0
+
+
+
+# modelling 
 
 fitcontrol <- trainControl(method = "cv", number =5, savePredictions = "final",
                            classProbs = TRUE, verboseIter = TRUE, summaryFunction = LogLosSummary)
