@@ -66,3 +66,24 @@ stopCluster(cl)
 #Tuning parameter
 # 'min_child_weight' was held constant at a value of 1
 #Tuning parameter 'subsample' was held constant at a value of 1
+
+
+model_xgb
+eXtreme Gradient Boosting 
+
+780486 samples
+    71 predictor
+     2 classes: 'N', 'Y' 
+
+No pre-processing
+Resampling: Cross-Validated (5 fold) 
+Summary of sample sizes: 624389, 624389, 624389, 624389, 624388 
+Resampling results:
+
+  Accuracy   Kappa      LogLoss  
+  0.9362794  0.7759993  0.1580655
+
+Tuning parameter 'nrounds' was held constant at
+ at a value of 1
+Tuning parameter 'subsample'
+ was held constant at a value of 0.6
