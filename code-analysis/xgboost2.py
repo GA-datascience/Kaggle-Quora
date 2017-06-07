@@ -835,8 +835,9 @@ x_train_cv, x_valid, y_train_cv, y_valid = train_test_split(x_train, y_train,
 
 ### 5.1) Setting the model parameters  ###
 params = {} # dict 
-params['eta'] = 0.1
-params['max_depth'] = 5 
+params['eta'] = 0.02
+params['max_depth'] = 7
+params['subsample'] = 0.6 
 params['objective'] = 'binary:logistic'
 params['eval_metric'] = 'logloss'
 params['seed'] = random
@@ -899,7 +900,7 @@ xg_train = xgb.DMatrix(x_train, label = y_train) # train set input into xgb
 watchlist = [(xg_train, 'train')]
 
 # train on entire train set 
-bst = xgb.train(params, xg_train, 1000, watchlist)
+bst = xgb.train(params, xg_train, 3000, watchlist)
 
 
 ### 5.4) Test the model  ###
