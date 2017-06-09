@@ -10,10 +10,33 @@ author: "Team Members: Germayne Ng, Alson Yap"
 <br>
 Link to competition details and question: https://www.kaggle.com/c/quora-question-pairs
 
+
+
+
+# Closing
+
+Our final submission is as such: 
+
+Model | Public Score | Private Score 
+--- | --- | --- 
+Xgboost 3000 + LSTM | 0.14291 | 0.14602
+Xgboost 2500 + LSTM | 0.14276 | 0.14598
+
+Surpising xgboost 3000 overfits on its own. But when combined with LSTM, works better than 2500. This nets us the silver medal (161/3394)
+
+
+
 ---
 
 # Update Logs
 <br>
+
+* **Version Final - :**
+  + Added pagerank features, <s>overlap and matching coefficients</s>, <s>BOW</s> ( due to time constraint) 
+  + Tuned xgboost parameter. Final xgboost 0.15028 
+  + Ran LSTM model. Score = 0.15848
+  + Ensemble model. Score = 0.14276
+ 
 
 * **Version 2.1 - 31st May 2017:**
 
@@ -153,18 +176,3 @@ Link to competition details and question: https://www.kaggle.com/c/quora-questio
 
 ---
 
-# To do list
-<br>
-
-* Test out location features (its inclusion as a whole, and converting has/has not features into binary features so that XGBoost can account for it)
-* Make a new feature of q1_freq - q2_freq to see if model improves by taking into account the difference in frequency
-* Re-run Abhishek's features with word2vec and gensim
-* Add 3rd LSA component to test out its effectiveness
-* Add extra distances features using the research paper and <s>jellyfish library</s>
-* Explore LDA
-* Explore WordNet
-* Explore the image features
-* Consider using lemmatizing or stemming of words
-* **Lastly... Look out for magic features :S**
-    
----
